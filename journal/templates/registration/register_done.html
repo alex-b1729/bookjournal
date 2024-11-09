@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+<h5 class="card-title">
+    Welcome {{ request.user.username }}
+</h5>
+
+<p>
+    Your account has been successfully created.
+    <a href="{% url 'login' %}">Log in</a> to set up your account.
+</p>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<ul>
+    {% for entry in entries %}
+    <li>
+        {% if entry.status == 'd' %}
+        <h4 class="text-muted">Draft</h4>
+        {% endif %}
+        <h4>
+            <a href="{% url 'entry_detail' entry.pk %}">
+                {% if entry.title %}
+                {{ entry.title }} ({{ entry.book }})
+                {% else %}
+                {{ entry.book }}
+                {% endif %}
+            </a>
+        </h4>
+        <p>{{ entry.publish_dt }} - {{ entry.author }}</p>
+        <p>{{ entry.body|truncatewords:30|linebreaks }}</p>
+    </li>
+    {% empty %}
+    <li>You don't have any entries yet</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

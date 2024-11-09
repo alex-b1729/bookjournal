@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h4>
+    {% if entry.title %}
+    {{ entry.title }}
+    {% else %}
+    {{ entry.book }}
+    {% endif %}
+</h4>
+{% if entry.title %}
+<h5>
+    {{ entry.book }}
+</h5>
+{% endif %}
+<p>{{ entry.author }}</p>
+
+<p>{{ entry.publish_dt }}</p>
+
+<p>{{ entry.body }}</p>
+{% endblock content %}
