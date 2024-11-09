@@ -4,10 +4,10 @@
 <ul>
     {% for entry in entries %}
     <li>
-        {% if entry.status == 'd' %}
-        <h4 class="text-muted">Draft</h4>
-        {% endif %}
-        <h4>
+        <h5>
+            {% if entry.status == 'd' %}
+            <span class="text-muted">Draft</span>
+            {% endif %}
             <a href="{% url 'entry_detail' entry.pk %}">
                 {% if entry.title %}
                 {{ entry.title }} ({{ entry.book }})
@@ -15,7 +15,7 @@
                 {{ entry.book }}
                 {% endif %}
             </a>
-        </h4>
+        </h5>
         <p>{{ entry.publish_dt }} - {{ entry.author }}</p>
         <p>{{ entry.body|truncatewords:30|linebreaks }}</p>
     </li>
@@ -23,4 +23,6 @@
     <li>You don't have any entries yet</li>
     {% endfor %}
 </ul>
+
+{% include 'partials/pagination.html' with page=page_obj %}
 {% endblock content %}

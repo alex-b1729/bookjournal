@@ -1,6 +1,9 @@
 from django.http import HttpResponse
+from django.views.generic import ListView
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from journal import forms
 from journal import models
@@ -33,16 +36,19 @@ def account(request):
     return HttpResponse('Your account =)')
 
 
-@login_required
-def entry_list(request):
-    entries = models.Entry.objects.filter(author=request.user)
-    return render(
-        request,
-        'entry/list.html',
-        {
-            'entries': entries,
-        }
-    )
+class EntryListView(
+    LoginRequiredMixin,
+    ListView,
+):
+    queryset = None
+    context_object_name = 'entries'
+    paginate_by = 3
+    template_name = 'entry/list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.queryset = models.Entry.objects.filter(author=request.user)
+        return super().dispatch(request, *args, **kwargs)
+
 
 
 @login_required
