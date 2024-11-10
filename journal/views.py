@@ -1,9 +1,8 @@
-from django.http import HttpResponse
-from django.views.generic import ListView
+from django.views import generic
+from django.urls import reverse_lazy
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from journal import forms
 from journal import models
@@ -40,18 +39,30 @@ def account(request):
     )
 
 
+class AuthorMixin(object):
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(author=self.request.user)
+
+
+class AuthorEditMixin(object):
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+
+class AuthorEntryMixin(AuthorMixin):
+    model = models.Entry
+
+
 class EntryListView(
     LoginRequiredMixin,
-    ListView,
+    AuthorEntryMixin,
+    generic.ListView,
 ):
-    queryset = None
     context_object_name = 'entries'
     paginate_by = 3
     template_name = 'entry/list.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.queryset = models.Entry.objects.filter(author=request.user)
-        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,26 +70,60 @@ class EntryListView(
         return context
 
 
-@login_required
-def entry_detail(request, entry_pk):
-    entry = get_object_or_404(
-        models.Entry,
-        pk=entry_pk,
-        author=request.user,
-    )
-    return render(
-        request,
-        'entry/detail.html',
-        {
-            'section': 'journal',
-            'entry': entry,
-        }
-    )
-
-
-class BookListView(
-    ListView,
+class EntryDetailView(
+    LoginRequiredMixin,
+    AuthorEntryMixin,
+    generic.DetailView,
 ):
+    template_name = 'entry/detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['section'] = 'journal'
+        return context
+
+
+class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
+    fields = (
+        'title',
+        'status',
+        'body',
+    )
+    template_name = 'manage/entry.html'
+
+    def get_success_url(self):
+        return reverse_lazy('entry_detail', args=[self.object.pk])
+
+
+# todo: what's the best UX way to associate a new entry with a book?
+# class EntryCreateView(
+#     LoginRequiredMixin,
+#     AuthorEntryEditMixin,
+#     generic.CreateView,
+# ):
+#     pass
+
+
+class EntryUpdateView(
+    LoginRequiredMixin,
+    AuthorEntryEditMixin,
+    generic.UpdateView,
+):
+    pass
+
+
+class EntryDeleteView(
+    LoginRequiredMixin,
+    AuthorEntryMixin,
+    generic.DeleteView,
+):
+    template_name = 'manage/entry_delete.html'
+
+    def get_success_url(self):
+        return reverse_lazy('entry_list')
+
+
+class BookListView(generic.ListView):
     queryset = models.Book.objects.all()
     context_object_name = 'books'
     paginate_by = 3
@@ -90,23 +135,18 @@ class BookListView(
         return context
 
 
-def book_detail_view(request, book_pk):
-    book = get_object_or_404(
-        models.Book,
-        pk=book_pk,
-    )
-    return render(
-        request,
-        'library/book_detail.html',
-        {
-            'section': 'books',
-            'book': book,
-        },
-    )
+class BookDetailView(generic.DetailView):
+    model = models.Book
+    template_name = 'library/book_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['section'] = 'books'
+        return context
 
 
 class AuthorListView(
-    ListView,
+    generic.ListView,
 ):
     queryset = models.Author.objects.all()
     context_object_name = 'authors'
@@ -119,16 +159,11 @@ class AuthorListView(
         return context
 
 
-def author_detail_view(request, author_pk):
-    author = get_object_or_404(
-        models.Author,
-        pk=author_pk,
-    )
-    return render(
-        request,
-        'library/author_detail.html',
-        {
-            'section': 'authors',
-            'author': author,
-        },
-    )
+class AuthorDetailView(generic.DetailView):
+    model = models.Author
+    template_name = 'library/author_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['section'] = 'authors'
+        return context

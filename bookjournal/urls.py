@@ -36,14 +36,14 @@ urlpatterns = [
         'books/',
         include([
             path('', journal_views.BookListView.as_view(), name='book_list'),
-            path('<int:book_pk>/', journal_views.book_detail_view, name='book_detail'),
+            path('<int:pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
         ])
     ),
     path(
         'authors/',
         include([
             path('', journal_views.AuthorListView.as_view(), name='author_list'),
-            path('<int:author_pk>/', journal_views.author_detail_view, name='author_detail'),
+            path('<int:pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
         ])
     ),
 ]

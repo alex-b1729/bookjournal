@@ -3,6 +3,9 @@
 
 {% block content %}
 <h1>
+    {% if entry.status == 'd' %}
+    (Draft)
+    {% endif %}
     {% if entry.title %}
     {{ entry.title }}
     {% else %}

@@ -6,7 +6,9 @@
 <p>
     Authors:
     {% for author in book.authors.all %}
-    {{ author }}{% if not forloop.last %}, {% endif %}
+    <a href="{{ author.get_absolute_url }}">
+        {{ author }}
+    </a>{% if not forloop.last %}, {% endif %}
     {% endfor %}
 </p>
 {% endif %}
