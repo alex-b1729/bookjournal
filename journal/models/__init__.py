@@ -1,4 +1,4 @@
-from .media import (
+from .library import (
     Author,
     Book,
 )

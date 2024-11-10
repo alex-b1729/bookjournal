@@ -82,7 +82,7 @@ class BookListView(
     queryset = models.Book.objects.all()
     context_object_name = 'books'
     paginate_by = 3
-    template_name = 'media/book_list.html'
+    template_name = 'library/book_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -97,7 +97,7 @@ def book_detail_view(request, book_pk):
     )
     return render(
         request,
-        'media/book_detail.html',
+        'library/book_detail.html',
         {
             'section': 'books',
             'book': book,
@@ -111,7 +111,7 @@ class AuthorListView(
     queryset = models.Author.objects.all()
     context_object_name = 'authors'
     paginate_by = 3
-    template_name = 'media/author_list.html'
+    template_name = 'library/author_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -126,7 +126,7 @@ def author_detail_view(request, author_pk):
     )
     return render(
         request,
-        'media/author_detail.html',
+        'library/author_detail.html',
         {
             'section': 'authors',
             'author': author,

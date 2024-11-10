@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
-from . import media
+from . import library
 
 
 class PublishedManager(models.Manager):
@@ -22,7 +22,7 @@ class Entry(models.Model):
         on_delete=models.CASCADE,
     )
     book = models.ForeignKey(
-        media.Book,
+        library.Book,
         on_delete=models.CASCADE,  # doesn't feel right, consider changing
     )
     title = models.CharField(
