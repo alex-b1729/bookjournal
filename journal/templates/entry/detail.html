@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load entry_tags %}
 
 {% block content %}
 <h1>
@@ -26,5 +27,5 @@
 <h3>{{ entry.publish_dt }}</h3>
 <h3>By: {{ entry.author }}</h3>
 
-<p>{{ entry.body|linebreaks }}</p>
+<p>{{ entry.body|markdown }}</p>
 {% endblock content %}

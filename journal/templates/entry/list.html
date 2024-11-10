@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load entry_tags %}
 
 {% block content %}
 <ul>
@@ -17,7 +18,7 @@
             </a>
         </h5>
         <p>{{ entry.publish_dt }} - {{ entry.author }}</p>
-        <p>{{ entry.body|truncatewords:30|linebreaks }}</p>
+        <p>{{ entry.body|markdown|truncatewords:30 }}</p>
     </li>
     {% empty %}
     <li>You don't have any entries yet</li>
