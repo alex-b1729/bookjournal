@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -21,13 +22,19 @@ class Author(models.Model):
     )
 
     class Meta:
-        ordering = ['last_name']
+        ordering = (
+            'last_name',
+            'first_name',
+        )
 
     def __str__(self):
         if self.aka:
             return str(self.aka)
         else:
             return ' '.join([str(s) for s in [self.first_name, self.middle_name, self.last_name]])
+
+    def get_absolute_url(self):
+        return reverse('author_detail', args=[self.pk])
 
 
 class Book(models.Model):
@@ -43,5 +50,14 @@ class Book(models.Model):
         blank=True,
     )
 
+    class Meta:
+        ordering = (
+            '-published',
+            'title',
+        )
+
     def __str__(self):
         return str(self.title)
+
+    def get_absolute_url(self):
+        return reverse('book_detail', args=[self.pk])

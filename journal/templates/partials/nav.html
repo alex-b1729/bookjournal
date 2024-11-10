@@ -1,55 +1,50 @@
 {% load static %}
-<nav class="navbar navbar-expand-md navbar-light bg-light mb-3">
-    <div class="container-fluid">
-
-        <a class="navbar-brand" href="/">
-            <img src="#" alt="Logo" width="24" height="24" class="d-inline-block align-text-top">
-            BookJournal
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            {% if request.user.is_authenticated %}
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link{% if section == 'journal' %} active{% endif %}" href="{% url 'entry_list' %}">Journal</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled{% if section == 'books' %} active{% endif %}" href="#">Books</a>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav">
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" roll="button" id="navbarDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        Hello {{ request.user.username }}
+<nav>
+    <h4>BookJournal</h4>
+    <ul>
+        <li>
+            <a class="{% if section == 'journal' %}current{% endif %}" href="{% url 'entry_list' %}">
+                {% if section == 'journal' %}>{% endif %}
+                Journal
+            </a>
+        </li>
+        <li>
+            <a class="{% if section == 'books' %}current{% endif %}" href="{% url 'book_list' %}">
+                {% if section == 'books' %}>{% endif %}
+                Books
+            </a>
+        </li>
+        <li>
+            <a class="{% if section == 'authors' %}current{% endif %}" href="{% url 'author_list' %}">
+                {% if section == 'authors' %}>{% endif %}
+                Authors
+            </a>
+        </li>
+        {% if request.user.is_authenticated %}
+        <li>
+            Hello {{ request.user.username }}
+            <ul>
+                <li>
+                    <a href="{% url 'account' %}">
+                        {% if section == 'account' %}>{% endif %}
+                        Your Account
                     </a>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                        <li><a class="dropdown-item" href="{% url 'account' %}">Account</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form action="{% url 'logout' %}" method="post">
-                                <button type="submit" class="dropdown-item btn btn-link">Logout</button>
-                                {% csrf_token %}
-                            </form>
-                        </li>
-                    </ul>
+                </li>
+                <li>
+                    <form action="{% url 'logout' %}" method="post">
+                        <button type="submit">Logout</button>
+                        {% csrf_token %}
+                    </form>
                 </li>
             </ul>
-
-            {% else %}
-            <ul class="navbar-nav ms-auto">
-                <a
-                        class="nav-link"
-                        href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
-                    Log-in
-                </a>
-            </ul>
-            {% endif %}
-
-        </div>
-    </div>
+        </li>
+        {% else %}
+        <li>
+            <a href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
+                Log-in
+            </a>
+        </li>
+        {% endif %}
+    </ul>
 </nav>
+<hr/>

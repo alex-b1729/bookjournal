@@ -32,4 +32,18 @@ urlpatterns = [
         ]),
     ),
     path('journal/', include('journal.urls')),
+    path(
+        'book/',
+        include([
+            path('', journal_views.BookListView.as_view(), name='book_list'),
+            path('<int:book_pk>/', journal_views.book_detail_view, name='book_detail'),
+        ])
+    ),
+    path(
+        'author/',
+        include([
+            path('', journal_views.AuthorListView.as_view(), name='author_list'),
+            path('<int:author_pk>/', journal_views.author_detail_view, name='author_detail'),
+        ])
+    ),
 ]

@@ -60,4 +60,4 @@ class Entry(models.Model):
         return f'{self.title if self.title else self.book} - {self.author}'
 
     def get_absolute_url(self):
-        return reverse('journal:entry_detail', args=[self.pk])
+        return reverse('entry_detail', args=[self.pk])

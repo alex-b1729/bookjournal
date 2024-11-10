@@ -1,21 +1,30 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4>
+<h1>
     {% if entry.title %}
     {{ entry.title }}
     {% else %}
-    {{ entry.book }}
+    <a href="{{ entry.book.get_absolute_url }}">{{ entry.book }}</a>
     {% endif %}
-</h4>
+</h1>
 {% if entry.title %}
-<h5>
-    {{ entry.book }}
-</h5>
+<h2>
+    <a href="{{ entry.book.get_absolute_url }}">{{ entry.book }}</a>
+</h2>
 {% endif %}
-<p>{{ entry.author }}</p>
+{% with authors=entry.book.authors.all %}
+{% if authors %}
+<h3>
+    Author{{ authors|pluralize }}:
+    {% for author in authors %}
+    <a href="{{ author.get_absolute_url }}">{{ author }}</a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</h3>
+{% endif %}
+{% endwith %}
+<h3>{{ entry.publish_dt }}</h3>
+<h3>By: {{ entry.author }}</h3>
 
-<p>{{ entry.publish_dt }}</p>
-
-<p>{{ entry.body }}</p>
+<p>{{ entry.body|linebreaks }}</p>
 {% endblock content %}

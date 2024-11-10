@@ -33,7 +33,11 @@ def register(request):
 
 @login_required
 def account(request):
-    return HttpResponse('Your account =)')
+    return render(
+        request,
+        'account.html',
+        {'section': 'account'},
+    )
 
 
 class EntryListView(
@@ -49,6 +53,10 @@ class EntryListView(
         self.queryset = models.Entry.objects.filter(author=request.user)
         return super().dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'section': 'journal'})
+        return context
 
 
 @login_required
@@ -62,6 +70,65 @@ def entry_detail(request, entry_pk):
         request,
         'entry/detail.html',
         {
+            'section': 'journal',
             'entry': entry,
         }
+    )
+
+
+class BookListView(
+    ListView,
+):
+    queryset = models.Book.objects.all()
+    context_object_name = 'books'
+    paginate_by = 3
+    template_name = 'media/book_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'section': 'books'})
+        return context
+
+
+def book_detail_view(request, book_pk):
+    book = get_object_or_404(
+        models.Book,
+        pk=book_pk,
+    )
+    return render(
+        request,
+        'media/book_detail.html',
+        {
+            'section': 'books',
+            'book': book,
+        },
+    )
+
+
+class AuthorListView(
+    ListView,
+):
+    queryset = models.Author.objects.all()
+    context_object_name = 'authors'
+    paginate_by = 3
+    template_name = 'media/author_list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({'section': 'authors'})
+        return context
+
+
+def author_detail_view(request, author_pk):
+    author = get_object_or_404(
+        models.Author,
+        pk=author_pk,
+    )
+    return render(
+        request,
+        'media/author_detail.html',
+        {
+            'section': 'authors',
+            'author': author,
+        },
     )

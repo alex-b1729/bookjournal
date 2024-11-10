@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ author }}</h1>
+{% with books=author.book_set.all %}
+{% if books %}
+<h2>Books:</h2>
+<ul>
+    {% for book in books %}
+    <li>
+        {{ book.published }} - <a href="{{ book.get_absolute_url }}">{{ book }}</a>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No books for this author yet.</p>
+{% endif %}
+{% endwith %}
+{% endblock content %}

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <ul>
+        {% for author in authors %}
+        <li>
+            <h5>
+                <a href="{{ author.get_absolute_url }}">
+                    {{ author }}
+                </a>
+            </h5>
+            {% with books=author.book_set %}
+            {% if books %}
+            <p>{{ books.count }} books</p>
+            {% else %}
+            <p>No books databased for this author</p>
+            {% endif %}
+            {% endwith %}
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% include 'partials/pagination.html' with page=page_obj %}
+{% endblock content %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div>
+    <ul>
+        {% for book in books %}
+        <li>
+            <h5>
+                <a href="{{ book.get_absolute_url }}">
+                    {{ book.title }}
+                </a>
+            </h5>
+            {% if book.authors %}
+            <p>
+                {% for author in book.authors.all %}
+                {{ author }}{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </p>
+            {% endif %}
+            <p>{{ book.published }}</p>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+
+{% include 'partials/pagination.html' with page=page_obj %}
+{% endblock content %}
