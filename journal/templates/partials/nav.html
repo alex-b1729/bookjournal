@@ -2,14 +2,18 @@
 <nav>
     <h4>BookJournal</h4>
     <ul>
-        {% if request.user.is_authenticated %}
         <li>
-            <a class="{% if section == 'journal' %}current{% endif %}" href="{% url 'entry_list' %}">
+            <a
+                    class="{% if section == 'journal' %}current{% endif %}"
+                    {% if request.user.is_authenticated %}
+                    href="{% url 'author_entry_list' request.user.username %}">
+                    {% else %}
+                    href="{% url 'entry_list' %}">
+                    {% endif %}
                 {% if section == 'journal' %}>{% endif %}
                 Journal
             </a>
         </li>
-        {% endif %}
         <li>
             <a class="{% if section == 'books' %}current{% endif %}" href="{% url 'book_list' %}">
                 {% if section == 'books' %}>{% endif %}

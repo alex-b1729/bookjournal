@@ -1,6 +1,6 @@
 from django.views import generic
 from django.urls import reverse_lazy
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -30,6 +30,19 @@ def register(request):
     )
 
 
+def entry_list_view(request):
+    if request.user.is_authenticated:
+        return redirect(reverse_lazy('author_entry_list', args=[request.user.username]))
+    else:
+        return render(
+            request,
+            'entry/list.html',
+            {
+                'section': 'journal',
+            }
+        )
+
+
 @login_required
 def account(request):
     return render(
@@ -55,14 +68,14 @@ class AuthorEntryMixin(AuthorMixin):
     model = models.Entry
 
 
-class EntryListView(
+class AuthorEntryListView(
     LoginRequiredMixin,
     AuthorEntryMixin,
     generic.ListView,
 ):
     context_object_name = 'entries'
     paginate_by = 3
-    template_name = 'entry/list.html'
+    template_name = 'entry/author_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -92,7 +105,7 @@ class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
     template_name = 'manage/entry.html'
 
     def get_success_url(self):
-        return reverse_lazy('entry_detail', args=[self.object.pk])
+        return reverse_lazy('entry_detail', args=[self.object.author.username, self.object.pk])
 
 
 # todo: what's the best UX way to associate a new entry with a book?
@@ -120,7 +133,7 @@ class EntryDeleteView(
     template_name = 'manage/entry_delete.html'
 
     def get_success_url(self):
-        return reverse_lazy('entry_list')
+        return reverse_lazy('entry_list', args=[self.object.author.username])
 
 
 class BookListView(generic.ListView):

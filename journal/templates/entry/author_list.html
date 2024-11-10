@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load entry_tags %}
+
+{% block content %}
+<ul>
+    {% for entry in entries %}
+    <li>
+        <h5>
+            {% if entry.status == 'd' %}
+            <span>(Draft)</span>
+            {% endif %}
+            <a href="{{ entry.get_absolute_url }}">
+                {% if entry.title %}
+                {{ entry.title }} ({{ entry.book }})
+                {% else %}
+                {{ entry.book }}
+                {% endif %}
+            </a>
+        </h5>
+        <p>{{ entry.publish_dt }} - {{ entry.author }}</p>
+        <p>{{ entry.body|markdown|truncatewords:30 }}</p>
+    </li>
+    {% empty %}
+    <li>You don't have any entries yet</li>
+    {% endfor %}
+</ul>
+
+{% include 'partials/pagination.html' with page=page_obj %}
+{% endblock content %}
