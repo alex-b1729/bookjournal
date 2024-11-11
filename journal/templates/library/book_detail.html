@@ -21,23 +21,30 @@
 {% if entries %}
 <ul>
     {% for entry in entries %}
+
+    {% if entry.section %}
+    {% ifchanged entry.section %}
+    <h3>{{ entry.section }}</h3>
+    {% endifchanged %}
+    {% endif %}
+
+    {% if entry.chapter %}
+    {% ifchanged entry.chapter %}
+    <h4>Chapter {{ entry.chapter }}</h4>
+    {% endifchanged %}
+    {% endif %}
+
     <li>
-        <h3>
+        <h4>
             {% if entry.status == 'd' %}
             <span>(Draft)</span>
             {% endif %}
             <a href="{{ entry.get_absolute_url }}">
                 {{ entry.publish_dt }}
             </a>
-        </h3>
+            - {{ entry.author }}
+        </h4>
         <h4>{{ entry.title }}</h4>
-        <p>
-            {% with sec=entry.section chap=entry.chapter %}
-            {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
-            {% if chap %}Chapter {{ chap }}{% endif %}
-            {% endwith %}
-        </p>
-        <p>{{ entry.author }}</p>
         {% if entry.tags.exists %}
         <p>
             Tags:

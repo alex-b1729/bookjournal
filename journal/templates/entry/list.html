@@ -45,6 +45,19 @@
 </p>
 <ul>
 {% endifchanged %}
+
+    {% if entry.section %}
+    {% ifchanged entry.section %}
+    <h3>{{ entry.section }}</h3>
+    {% endifchanged %}
+    {% endif %}
+
+    {% if entry.chapter %}
+    {% ifchanged entry.chapter %}
+    <h4>Chapter {{ entry.chapter }}</h4>
+    {% endifchanged %}
+    {% endif %}
+
     <li>
         <h4>
             {% if entry.status == 'd' %}
