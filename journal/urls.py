@@ -8,7 +8,7 @@ urlpatterns = [
         '<str:username>/',
         include([
             path('', views.EntryListView.as_view(), name='entry_list'),
-            path('tag/<slug:tag_slug>/', views.EntryListView.as_view(), name='entry_list_by_tag'),
+            # path('tag/<slug:tag_slug>/', views.EntryListView.as_view(), name='entry_list_by_tag'),
             path('create/<int:book_pk>/', views.EntryCreateView.as_view(), name='entry_create'),
             path(
                 '<int:pk>/',

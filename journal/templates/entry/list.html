@@ -28,7 +28,7 @@
         <p>
             Tags:
             {% for tag in entry.tags.all %}
-            <a href="{% url 'entry_list_by_tag' entry.author.username tag.slug %}">
+            <a href="{% url 'entry_list' entry.author.username %}?tag={{ tag.slug }}">
                 {{ tag }}
             </a>
             {% if not forloop.last %} | {% endif %}
@@ -42,5 +42,5 @@
     {% endfor %}
 </ul>
 
-{% include 'partials/pagination.html' with page=page_obj %}
+{% include 'partials/pagination.html' with page=page_obj tag=tag %}
 {% endblock content %}

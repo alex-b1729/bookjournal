@@ -1,5 +1,6 @@
 from django.views import generic
 from django.urls import reverse_lazy
+from django.core.validators import slug_re
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
@@ -86,12 +87,13 @@ class EntryListView(
     tag = None
 
     def dispatch(self, request, *args, **kwargs):
-        tag_slug = kwargs.get('tag_slug')
+        tag_slug = request.GET.get('tag')
         if tag_slug:
-            self.tag = get_object_or_404(
-                Tag,
-                slug=tag_slug
-            )
+            if slug_re.match(tag_slug):
+                try:
+                    self.tag = Tag.objects.get(slug=tag_slug)
+                except Tag.DoesNotExist:
+                    pass
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):

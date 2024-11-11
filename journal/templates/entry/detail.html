@@ -34,7 +34,7 @@
 <p>
     tags:
     {% for tag in entry.tags.all %}
-    <a href="{% url 'entry_list_by_tag' entry.author.username tag.slug %}">
+    <a href="{% url 'entry_list' entry.author.username %}?tag={{ tag.slug }}">
         {{ tag }}
     </a>
     {% if not forloop.last %} | {% endif %}
