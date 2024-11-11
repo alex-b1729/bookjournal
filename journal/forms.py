@@ -41,3 +41,7 @@ class UserRegistrationForm(forms.ModelForm):
         user.set_password(self.cleaned_data['password2'])
         user.save(commit)
         return user
+
+
+class SearchForm(forms.Form):
+    query = forms.CharField()

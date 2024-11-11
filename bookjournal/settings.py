@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "journal.apps.JournalConfig",
     "taggit",
+    "django.contrib.postgres",
 ]
 
 MIDDLEWARE = [

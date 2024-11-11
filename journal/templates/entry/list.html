@@ -7,7 +7,28 @@
     {% if tag %}
     tagged with "{{ tag.name }}"
     {% endif %}
+    {% if 'query' in query_params %}
+    matching the query "{{ query_params.query }}"
+    {% endif %}
 </h2>
+
+<form method="get">
+    <p>
+        {{ form.query }}
+        <input type="submit" value="Search"/>
+    </p>
+</form>
+
+{% if 'query' in query_params %}
+{% with num=page_obj.paginator.count %}
+<h3>
+    {{ num }} result{{ num|pluralize }}
+    <a href="{% url 'entry_list' request.user.username %}">
+        Clear
+    </a>
+</h3>
+{% endwith %}
+{% endif %}
 <ul>
     {% for entry in entries %}
     <li>
@@ -44,9 +65,13 @@
         <p>{{ entry.body|markdown }}</p>
     </li>
     {% empty %}
+    {% if 'query' in query_params %}
+    <li>No entries match your search</li>
+    {% else %}
     <li>You don't have any entries yet</li>
+    {% endif %}
     {% endfor %}
 </ul>
 
-{% include 'partials/pagination.html' with page=page_obj tag=tag %}
+{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
 {% endblock content %}

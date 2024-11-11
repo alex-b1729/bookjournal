@@ -1,6 +1,35 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Books
+{% endblock %}
+
 {% block content %}
+<h2>
+    Books
+    {% if 'query' in query_params %}
+    matching the query "{{ query_params.query }}"
+    {% endif %}
+</h2>
+
+<form method="get">
+    <p>
+        {{ form.query }}
+        <input type="submit" value="Search"/>
+    </p>
+</form>
+
+{% if 'query' in query_params %}
+{% with num=page_obj.paginator.count %}
+<h3>
+    {{ num }} result{{ num|pluralize }}
+    <a href="{% url 'book_list' %}">
+        Clear
+    </a>
+</h3>
+{% endwith %}
+{% endif %}
+
 <div>
     <ul>
         {% for book in books %}
@@ -25,5 +54,5 @@
     </ul>
 </div>
 
-{% include 'partials/pagination.html' with page=page_obj %}
+{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
 {% endblock content %}

@@ -2,8 +2,8 @@
     <span class="step-links">
         {% if page.has_previous %}
         <a
-                {% if tag %}
-                href="?tag={{ tag }}&page={{ page.previous_page_number }}">
+                {% if query_params %}
+                href="?{% for k, v in query_params.items %}{{ k }}={{ v }}&{% endfor %}page={{ page.previous_page_number }}">
                 {% else %}
                 href="?page={{ page.previous_page_number }}">
                 {% endif %}
@@ -15,8 +15,8 @@
         </span>
         {% if page.has_next %}
         <a
-                {% if tag %}
-                href="?tag={{ tag }}&page={{ page.next_page_number }}">
+                {% if query_params %}
+                href="?{% for k, v in query_params.items %}{{ k }}={{ v }}&{% endfor %}page={{ page.next_page_number }}">
                 {% else %}
                 href="?page={{ page.next_page_number }}">
                 {% endif %}

@@ -2,6 +2,7 @@ from django.views import generic
 from django.urls import reverse_lazy
 from django import forms as django_forms
 from django.core.validators import slug_re
+from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
@@ -85,14 +86,29 @@ class EntryListView(
     context_object_name = 'entries'
     paginate_by = 3
     template_name = 'entry/list.html'
+    query_params = {}
     tag = None
+    form = forms.SearchForm()
+    query = None
+    results = []
 
     def dispatch(self, request, *args, **kwargs):
+        self.query_params = {}
+        # search management
+        if 'query' in request.GET:
+            # todo: problem if this includes tag GET data?
+            self.form = forms.SearchForm(request.GET)
+            if self.form.is_valid():
+                self.query = self.form.cleaned_data['query']
+                self.query_params['query'] = self.query
+
+        # tag management
         tag_slug = request.GET.get('tag')
         if tag_slug:
             if slug_re.match(tag_slug):
                 try:
                     self.tag = Tag.objects.get(slug=tag_slug)
+                    self.query_params['tag'] = self.tag.slug
                 except Tag.DoesNotExist:
                     pass
         return super().dispatch(request, *args, **kwargs)
@@ -100,12 +116,24 @@ class EntryListView(
     def get_queryset(self):
         qs = super().get_queryset()
         if self.tag:
-            return qs.filter(tags__in=[self.tag])
+            qs = qs.filter(tags__in=[self.tag])
+        if self.query:
+            qs = qs.annotate(
+                search=SearchVector(
+                    'title',
+                    'body',
+                    'book__title',
+                ),
+            ).filter(search=self.query)
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['tag'] = self.tag
+        context.update({
+            'tag': self.tag,
+            'form': self.form,
+            'query_params': self.query_params,
+        })
         return context
 
 
@@ -186,14 +214,41 @@ class BookCreateView(
 
 
 class BookListView(generic.ListView):
-    queryset = models.Book.objects.all()
     context_object_name = 'books'
     paginate_by = 3
     template_name = 'library/book_list.html'
+    query_params = {}
+    form = forms.SearchForm()
+    query = None
+    results = []
+
+    def dispatch(self, request, *args, **kwargs):
+        self.query_params = {}
+        if 'query' in request.GET:
+            self.form = forms.SearchForm(request.GET)
+            if self.form.is_valid():
+                self.query = self.form.cleaned_data['query']
+                self.query_params['query'] = self.query
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = models.Book.objects.all()
+        if self.query:
+            qs = qs.annotate(
+                search=SearchVector(
+                    'title',
+                    # todo: how to search authors?
+                ),
+            ).filter(search=self.query)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['section'] = 'books'
+        context.update({
+            'section': 'books',
+            'form': self.form,
+            'query_params': self.query_params,
+        })
         return context
 
 
