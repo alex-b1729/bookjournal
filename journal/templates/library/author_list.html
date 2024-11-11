@@ -5,11 +5,11 @@
     <ul>
         {% for author in authors %}
         <li>
-            <h5>
+            <h2>
                 <a href="{{ author.get_absolute_url }}">
                     {{ author }}
                 </a>
-            </h5>
+            </h2>
             {% with books=author.book_set %}
             {% if books %}
             <p>{{ books.count }} books</p>

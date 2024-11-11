@@ -1,19 +1,25 @@
 {% extends 'base.html' %}
 
+{# this is really setup like a book list view but filtered by an author #}
+
 {% block content %}
-<h1>{{ author }}</h1>
-{% with books=author.book_set.all %}
-{% if books %}
-<h2>Books:</h2>
+<h2>{{ author }}</h2>
+{% if author.aka %}
+<p>({{ author.full_name }})</p>
+{% endif %}
+
 <ul>
     {% for book in books %}
     <li>
-        {{ book.published }} - <a href="{{ book.get_absolute_url }}">{{ book }}</a>
+        <h2>
+            <a href="{{ book.get_absolute_url }}">{{ book }}</a>
+            - {{ book.published }}
+        </h2>
+        <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
     </li>
+    {% empty %}
+    <li>No books for this author.</li>
     {% endfor %}
 </ul>
-{% else %}
-<p>No books for this author yet.</p>
-{% endif %}
-{% endwith %}
+{% include 'partials/pagination.html' with page=page_obj %}
 {% endblock content %}

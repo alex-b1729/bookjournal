@@ -205,11 +205,24 @@ class AuthorListView(generic.ListView):
         return context
 
 
-class AuthorDetailView(generic.DetailView):
-    model = models.Author
+class AuthorDetailView(generic.ListView):
+    author = None
+    context_object_name = 'books'
+    paginate_by = 3
     template_name = 'library/author_detail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.author = get_object_or_404(
+            models.Author,
+            pk=kwargs.get('author_pk'),
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.Book.objects.filter(authors__in=[self.author])
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['author'] = self.author
         context['section'] = 'authors'
         return context

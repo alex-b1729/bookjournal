@@ -43,7 +43,7 @@ urlpatterns = [
         'authors/',
         include([
             path('', journal_views.AuthorListView.as_view(), name='author_list'),
-            path('<int:pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
+            path('<int:author_pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
         ])
     ),
 ]

@@ -31,10 +31,14 @@ class Author(models.Model):
         if self.aka:
             return str(self.aka)
         else:
-            return ' '.join([str(s) for s in [self.first_name, self.middle_name, self.last_name]])
+            return self.full_name
 
     def get_absolute_url(self):
         return reverse('author_detail', args=[self.pk])
+
+    @property
+    def full_name(self):
+        return ' '.join([str(s) for s in [self.first_name, self.middle_name, self.last_name]])
 
 
 class Book(models.Model):
