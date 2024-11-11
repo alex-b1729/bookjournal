@@ -1,5 +1,6 @@
 from django.views import generic
 from django.urls import reverse_lazy
+from django import forms as django_forms
 from django.core.validators import slug_re
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -173,6 +174,15 @@ class EntryDeleteView(
         return reverse_lazy('entry_list', args=[self.object.author.username])
 
 
+class BookCreateView(
+    LoginRequiredMixin,
+    generic.CreateView,
+):
+    model = models.Book
+    template_name = 'manage/book_create.html'
+    fields = ('title', 'authors', 'published',)
+
+
 class BookListView(generic.ListView):
     queryset = models.Book.objects.all()
     context_object_name = 'books'
@@ -193,6 +203,20 @@ class BookDetailView(generic.DetailView):
         context = super().get_context_data(**kwargs)
         context['section'] = 'books'
         return context
+
+
+class AuthorCreateView(
+    LoginRequiredMixin,
+    generic.CreateView,
+):
+    model = models.Author
+    template_name = 'manage/author_create.html'
+    fields = '__all__'
+
+    def get_form(self, **kwargs):
+        form = super().get_form(**kwargs)
+        form.fields['aka'].help_text = 'For example: J. R. R. Tolkien'
+        return form
 
 
 class AuthorListView(generic.ListView):

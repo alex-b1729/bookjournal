@@ -36,6 +36,7 @@ urlpatterns = [
         'books/',
         include([
             path('', journal_views.BookListView.as_view(), name='book_list'),
+            path('create/', journal_views.BookCreateView.as_view(), name='book_create'),
             path('<int:pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
         ])
     ),
@@ -43,6 +44,7 @@ urlpatterns = [
         'authors/',
         include([
             path('', journal_views.AuthorListView.as_view(), name='author_list'),
+            path('create/', journal_views.AuthorCreateView.as_view(), name='author_create'),
             path('<int:author_pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
         ])
     ),
