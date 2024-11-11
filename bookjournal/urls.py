@@ -37,7 +37,7 @@ urlpatterns = [
         include([
             path('', journal_views.BookListView.as_view(), name='book_list'),
             path('create/', journal_views.BookCreateView.as_view(), name='book_create'),
-            path('<int:pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
+            path('<int:book_pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
         ])
     ),
     path(

@@ -197,12 +197,24 @@ class BookListView(generic.ListView):
         return context
 
 
-class BookDetailView(generic.DetailView):
-    model = models.Book
+class BookDetailView(generic.ListView):
+    book = None
+    context_object_name = 'entries'
     template_name = 'library/book_detail.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.book = get_object_or_404(
+            models.Book,
+            pk=kwargs.get('book_pk'),
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.Entry.objects.filter(book=self.book).order_by('section', 'chapter', '-publish_dt')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['book'] = self.book
         context['section'] = 'books'
         return context
 

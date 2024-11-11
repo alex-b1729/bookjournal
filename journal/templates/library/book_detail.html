@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load entry_tags %}
 
 {% block content %}
 <h2>{{ book.title }}</h2>
@@ -16,5 +17,42 @@
 <p>
     <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
 </p>
+
+{% if entries %}
+<ul>
+    {% for entry in entries %}
+    <li>
+        <h3>
+            {% if entry.status == 'd' %}
+            <span>(Draft)</span>
+            {% endif %}
+            <a href="{{ entry.get_absolute_url }}">
+                {{ entry.publish_dt }}
+            </a>
+        </h3>
+        <h4>{{ entry.title }}</h4>
+        <p>
+            {% with sec=entry.section chap=entry.chapter %}
+            {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+            {% if chap %}Chapter {{ chap }}{% endif %}
+            {% endwith %}
+        </p>
+        <p>{{ entry.author }}</p>
+        {% if entry.tags.exists %}
+        <p>
+            Tags:
+            {% for tag in entry.tags.all %}
+            <a href="{% url 'entry_list' entry.author.username %}?tag={{ tag.slug }}">
+                {{ tag }}
+            </a>
+            {% if not forloop.last %} | {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+        <p>{{ entry.body|markdown }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 {% endblock content %}
