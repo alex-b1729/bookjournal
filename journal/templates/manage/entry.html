@@ -8,21 +8,60 @@ Entry
 {% endblock title %}
 
 {% block content %}
-<h1>
-    {% if self.object.pk %}Edit
-    {% else %}New
-    {% endif %}
-    Entry
-</h1>
+<h1>{{ book.title }}</h1>
 <h2>
-    {{ book.title }} by
+    By
     {% for author in book.authors.all %}
     {{ author }}
     {% if not forloop.last %}, {% endif %}
     {% endfor %}
 </h2>
+<h3>
+    {% if self.object.pk %}Edit
+    {% else %}New
+    {% endif %}
+    Entry
+</h3>
 <form method="post">
-    {{ form.as_p }}
+    {{ form.non_field_errors }}
+
+    <div class="fieldWrapper">
+        {{ form.status.as_field_group }}
+    </div>
+    <div class="fieldWrapper">
+        {% if form.title.errors %}
+        <p>{{ form.title.errors }}</p>
+        {% endif %}
+        <p>
+            <label for="{{ form.title.id_for_label}}">Title: </label>
+            {{ form.title }} (optional)
+        </p>
+    </div>
+    <div class="fieldWrapper">
+        <p>
+            <label for="{{ form.tags.id_for_label}}">Tags: </label>
+            {{ form.tags }} (optional)<br/>
+            {{ form.tags.help_text }}
+        </p>
+    </div>
+    <div class="fieldWrapper">
+        {% if form.body.errors %}
+        <p>{{ form.body.errors }}</p>
+        {% endif %}
+        <label for="{{ form.body.id_for_label}}">Entry: </label><br/>
+        {{ form.body }}
+    </div>
+
+    <div class="fieldWrapper">
+        <p>
+            {{ form.section.as_field_group }}
+            {{ form.chapter.as_field_group }}
+            <br/>
+            Optional. Helpful for sorting journal entries.<br/>
+            For example: Section II, chapter 4.
+        </p>
+    </div>
+
     <button type="submit">Save</button>
     {% csrf_token %}
 </form>

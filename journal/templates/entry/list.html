@@ -23,6 +23,12 @@
                 {% endif %}
             </a>
         </h5>
+        <p>
+            {% with sec=entry.section chap=entry.chapter %}
+            {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+            {% if chap %}Chapter {{ chap }}{% endif %}
+            {% endwith %}
+        </p>
         <p>{{ entry.publish_dt }} - {{ entry.author }}</p>
         {% if entry.tags.exists %}
         <p>

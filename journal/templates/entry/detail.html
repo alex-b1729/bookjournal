@@ -27,6 +27,12 @@
 </h3>
 {% endif %}
 {% endwith %}
+<p>
+    {% with sec=entry.section chap=entry.chapter %}
+    {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+    {% if chap %}Chapter {{ chap }}{% endif %}
+    {% endwith %}
+</p>
 <h3>{{ entry.publish_dt }}</h3>
 <h3>By: {{ entry.author }}</h3>
 

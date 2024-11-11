@@ -121,6 +121,8 @@ class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
     fields = (
         'title',
         'status',
+        'section',
+        'chapter',
         'body',
         'tags',
     )

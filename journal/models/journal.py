@@ -30,6 +30,7 @@ class Entry(models.Model):
     title = models.CharField(
         max_length=200,
         blank=True,
+        verbose_name='entry title',
     )
     body = models.TextField(
         blank=False,
@@ -39,7 +40,15 @@ class Entry(models.Model):
         choices=Status,
         default=Status.PUBLISHED,
     )
-    tags = TaggableManager()
+    tags = TaggableManager(blank=True)
+    section = models.CharField(
+        max_length=200,
+        blank=True,
+    )
+    chapter = models.CharField(
+        max_length=200,
+        blank=True,
+    )
     publish_dt = models.DateTimeField(
         default=timezone.now,
         verbose_name='time published',
