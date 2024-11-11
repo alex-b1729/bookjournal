@@ -35,7 +35,7 @@ def register(request):
 
 def feed(request):
     if request.user.is_authenticated:
-        return redirect(reverse_lazy('author_entry_list', args=[request.user.username]))
+        return redirect(reverse_lazy('entry_list', args=[request.user.username]))
     else:
         return render(
             request,
