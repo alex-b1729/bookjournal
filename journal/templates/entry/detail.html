@@ -30,5 +30,5 @@
 <h3>{{ entry.publish_dt }}</h3>
 <h3>By: {{ entry.author }}</h3>
 
-<p>{{ entry.body|markdown }}</p>
+<p>{{ entry.body|markdown|linebreaks }}</p>
 {% endblock content %}

@@ -67,6 +67,11 @@ class AuthorEditMixin(object):
 class AuthorEntryMixin(AuthorMixin):
     model = models.Entry
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['section'] = 'journal'
+        return context
+
 
 class AuthorEntryListView(
     LoginRequiredMixin,
@@ -77,11 +82,6 @@ class AuthorEntryListView(
     paginate_by = 3
     template_name = 'entry/author_list.html'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({'section': 'journal'})
-        return context
-
 
 class EntryDetailView(
     LoginRequiredMixin,
@@ -89,11 +89,6 @@ class EntryDetailView(
     generic.DetailView,
 ):
     template_name = 'entry/detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['section'] = 'journal'
-        return context
 
 
 class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
@@ -144,7 +139,7 @@ class BookListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'section': 'books'})
+        context['section'] = 'books'
         return context
 
 
@@ -158,9 +153,7 @@ class BookDetailView(generic.DetailView):
         return context
 
 
-class AuthorListView(
-    generic.ListView,
-):
+class AuthorListView(generic.ListView):
     queryset = models.Author.objects.all()
     context_object_name = 'authors'
     paginate_by = 3
@@ -168,7 +161,7 @@ class AuthorListView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context.update({'section': 'authors'})
+        context['section'] = 'authors'
         return context
 
 
