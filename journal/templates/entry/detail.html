@@ -30,5 +30,17 @@
 <h3>{{ entry.publish_dt }}</h3>
 <h3>By: {{ entry.author }}</h3>
 
+{% if entry.tags.exists %}
+<p>
+    tags:
+    {% for tag in entry.tags.all %}
+    <a href="{% url 'entry_list_by_tag' entry.author.username tag.slug %}">
+        {{ tag }}
+    </a>
+    {% if not forloop.last %} | {% endif %}
+    {% endfor %}
+</p>
+{% endif %}
+
 <p>{{ entry.body|markdown|linebreaks }}</p>
 {% endblock content %}

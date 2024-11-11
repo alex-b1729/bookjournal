@@ -4,6 +4,8 @@ from django.conf import settings
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
+from taggit.managers import TaggableManager
+
 from . import library
 
 
@@ -37,6 +39,7 @@ class Entry(models.Model):
         choices=Status,
         default=Status.PUBLISHED,
     )
+    tags = TaggableManager()
     publish_dt = models.DateTimeField(
         default=timezone.now,
         verbose_name='time published',

@@ -6,9 +6,9 @@
             <a
                     class="{% if section == 'journal' %}current{% endif %}"
                     {% if request.user.is_authenticated %}
-                    href="{% url 'author_entry_list' request.user.username %}">
+                    href="{% url 'entry_list' request.user.username %}">
                     {% else %}
-                    href="{% url 'entry_list' %}">
+                    href="{% url 'feed' %}">
                     {% endif %}
                 {% if section == 'journal' %}>{% endif %}
                 Journal

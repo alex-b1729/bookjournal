@@ -1,8 +1,10 @@
 from django.views import generic
 from django.urls import reverse_lazy
-from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
+
+from taggit.models import Tag
 
 from journal import forms
 from journal import models
@@ -30,13 +32,13 @@ def register(request):
     )
 
 
-def entry_list_view(request):
+def feed(request):
     if request.user.is_authenticated:
         return redirect(reverse_lazy('author_entry_list', args=[request.user.username]))
     else:
         return render(
             request,
-            'entry/list.html',
+            'entry/feed.html',
             {
                 'section': 'journal',
             }
@@ -73,14 +75,35 @@ class AuthorEntryMixin(AuthorMixin):
         return context
 
 
-class AuthorEntryListView(
+class EntryListView(
     LoginRequiredMixin,
     AuthorEntryMixin,
     generic.ListView,
 ):
     context_object_name = 'entries'
     paginate_by = 3
-    template_name = 'entry/author_list.html'
+    template_name = 'entry/list.html'
+    tag = None
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tag:
+            return qs.filter(tags__in=[self.tag])
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['tag'] = self.tag
+        return context
+
+    def dispatch(self, request, *args, **kwargs):
+        tag_slug = kwargs.get('tag_slug')
+        if tag_slug:
+            self.tag = get_object_or_404(
+                Tag,
+                slug=tag_slug
+            )
+        return super().dispatch(request, *args, **kwargs)
 
 
 class EntryDetailView(
@@ -96,6 +119,7 @@ class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
         'title',
         'status',
         'body',
+        'tags',
     )
     template_name = 'manage/entry.html'
 
