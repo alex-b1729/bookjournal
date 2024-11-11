@@ -85,6 +85,15 @@ class EntryListView(
     template_name = 'entry/list.html'
     tag = None
 
+    def dispatch(self, request, *args, **kwargs):
+        tag_slug = kwargs.get('tag_slug')
+        if tag_slug:
+            self.tag = get_object_or_404(
+                Tag,
+                slug=tag_slug
+            )
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         qs = super().get_queryset()
         if self.tag:
@@ -95,15 +104,6 @@ class EntryListView(
         context = super().get_context_data(**kwargs)
         context['tag'] = self.tag
         return context
-
-    def dispatch(self, request, *args, **kwargs):
-        tag_slug = kwargs.get('tag_slug')
-        if tag_slug:
-            self.tag = get_object_or_404(
-                Tag,
-                slug=tag_slug
-            )
-        return super().dispatch(request, *args, **kwargs)
 
 
 class EntryDetailView(
