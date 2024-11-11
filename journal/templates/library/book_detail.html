@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4>{{ book.title }}</h4>
+<h2>{{ book.title }}</h2>
 {% if book.authors %}
 <p>
-    Authors:
+    By
     {% for author in book.authors.all %}
     <a href="{{ author.get_absolute_url }}">
         {{ author }}
@@ -13,4 +13,8 @@
 </p>
 {% endif %}
 <p>Published: {{ book.published }}</p>
+<p>
+    <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
+</p>
+
 {% endblock content %}

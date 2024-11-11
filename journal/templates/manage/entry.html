@@ -1,6 +1,26 @@
 {% extends 'base.html' %}
 
+{% block title %}
+{% if self.object.pk %}Edit
+{% else %}New
+{% endif %}
+Entry
+{% endblock title %}
+
 {% block content %}
+<h1>
+    {% if self.object.pk %}Edit
+    {% else %}New
+    {% endif %}
+    Entry
+</h1>
+<h2>
+    {{ book.title }} by
+    {% for author in book.authors.all %}
+    {{ author }}
+    {% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</h2>
 <form method="post">
     {{ form.as_p }}
     <button type="submit">Save</button>

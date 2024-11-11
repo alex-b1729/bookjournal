@@ -5,19 +5,21 @@
     <ul>
         {% for book in books %}
         <li>
-            <h5>
+            <h2>
                 <a href="{{ book.get_absolute_url }}">
-                    {{ book.title }}
+                    {{ book.title }} - {{ book.published }}
                 </a>
-            </h5>
+            </h2>
             {% if book.authors %}
             <p>
-                {% for author in book.authors.all %}
+                By {% for author in book.authors.all %}
                 {{ author }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
             </p>
             {% endif %}
-            <p>{{ book.published }}</p>
+            <p>
+                <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
+            </p>
         </li>
         {% endfor %}
     </ul>

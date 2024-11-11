@@ -128,12 +128,28 @@ class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
 
 
 # todo: what's the best UX way to associate a new entry with a book?
-# class EntryCreateView(
-#     LoginRequiredMixin,
-#     AuthorEntryEditMixin,
-#     generic.CreateView,
-# ):
-#     pass
+class EntryCreateView(
+    LoginRequiredMixin,
+    AuthorEntryEditMixin,
+    generic.CreateView,
+):
+    book = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.book = get_object_or_404(
+            models.Book,
+            pk=kwargs.get('book_pk'),
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['book'] = self.book
+        return context
+
+    def form_valid(self, form):
+        form.instance.book = self.book
+        return super().form_valid(form)
 
 
 class EntryUpdateView(
