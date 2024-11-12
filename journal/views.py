@@ -1,12 +1,12 @@
 from django.views import generic
 from django.contrib import messages
 from django.core.validators import slug_re
-from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
@@ -14,6 +14,10 @@ from taggit.models import Tag
 
 from journal import forms
 from journal import models
+
+
+def index(request):
+    return HttpResponse('you\'ve found the index page =)')
 
 
 def register(request):
@@ -94,19 +98,19 @@ class EmailUpdateView(
         return super().form_valid(form)
 
 
-class AuthorMixin(object):
+class UserMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()
         return qs.filter(author=self.request.user)
 
 
-class AuthorEditMixin(object):
+class UserEditMixin(object):
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
 
-class AuthorEntryMixin(AuthorMixin):
+class UserEntryMixin(UserMixin):
     model = models.Entry
 
     def get_context_data(self, **kwargs):
@@ -115,14 +119,15 @@ class AuthorEntryMixin(AuthorMixin):
         return context
 
 
-class EntryListView(
+class UserJournal(
     LoginRequiredMixin,
-    AuthorEntryMixin,
+    UserEntryMixin,
     generic.ListView,
 ):
+    """ListView of all request.user's entries"""
     context_object_name = 'entries'
-    paginate_by = 3
-    template_name = 'entry/list.html'
+    paginate_by = 5
+    template_name = 'journal/list.html'
     query_params = {}
     tag = None
     form = forms.SearchForm()
@@ -174,15 +179,19 @@ class EntryListView(
         return context
 
 
-class EntryDetailView(
+class UserEntryDetail(
     LoginRequiredMixin,
-    AuthorEntryMixin,
+    UserEntryMixin,
     generic.DetailView,
 ):
-    template_name = 'entry/detail.html'
+    """DetailView of an entry of request.user"""
+    template_name = 'journal/entry.html'
 
 
-class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
+class UserEntryEditMixin(
+    UserEntryMixin,
+    UserEditMixin,
+):
     fields = (
         'title',
         'visibility',
@@ -194,13 +203,12 @@ class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
     template_name = 'manage/entry.html'
 
     def get_success_url(self):
-        return reverse_lazy('entry_detail', args=[self.object.author.username, self.object.pk])
+        return reverse_lazy('user_entry_detail', args=[self.object.pk])
 
 
-# todo: what's the best UX way to associate a new entry with a book?
-class EntryCreateView(
+class UserEntryCreateView(
     LoginRequiredMixin,
-    AuthorEntryEditMixin,
+    UserEntryEditMixin,
     generic.CreateView,
 ):
     book = None
@@ -219,7 +227,9 @@ class EntryCreateView(
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['book'] = self.book
+        context.update({
+            'book': self.book,
+        })
         return context
 
     def form_valid(self, form):
@@ -227,23 +237,55 @@ class EntryCreateView(
         return super().form_valid(form)
 
 
-class EntryUpdateView(
+class UserEntryUpdate(
     LoginRequiredMixin,
-    AuthorEntryEditMixin,
+    UserEntryEditMixin,
     generic.UpdateView,
 ):
     pass
 
 
-class EntryDeleteView(
+class UserEntryDelete(
     LoginRequiredMixin,
-    AuthorEntryMixin,
+    UserEntryMixin,
     generic.DeleteView,
 ):
     template_name = 'manage/entry_delete.html'
 
     def get_success_url(self):
-        return reverse_lazy('entry_list', args=[self.object.author.username])
+        # todo: accept a next page
+        return reverse_lazy('user_journal')
+
+
+class UserBookEntryList(
+    LoginRequiredMixin,
+    generic.ListView,
+):
+    """ListView of request.user's entries associated with a book"""
+    book = None
+    context_object_name = 'entries'
+    template_name = 'journal/book.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.book = get_object_or_404(
+            models.Book,
+            pk=kwargs.get('book_pk')
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return models.Entry.objects.filter(
+            author=self.request.user,
+            book=self.book,
+        )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({
+            'section': 'journal',
+            'book': self.book,
+        })
+        return context
 
 
 class BookCreateView(
@@ -294,25 +336,16 @@ class BookListView(generic.ListView):
         return context
 
 
-class BookDetailView(generic.ListView):
-    book = None
-    context_object_name = 'entries'
+class BookDetailView(generic.DetailView):
+    model = models.Book
+    context_object_name = 'book'
     template_name = 'library/book_detail.html'
-
-    def dispatch(self, request, *args, **kwargs):
-        self.book = get_object_or_404(
-            models.Book,
-            pk=kwargs.get('book_pk'),
-        )
-        return super().dispatch(request, *args, **kwargs)
-
-    def get_queryset(self):
-        return models.Entry.objects.filter(book=self.book).order_by('section', 'chapter', '-publish_dt')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['book'] = self.book
-        context['section'] = 'books'
+        context.update({
+            'section': 'books'
+        })
         return context
 
 
@@ -345,7 +378,7 @@ class AuthorListView(generic.ListView):
 class AuthorDetailView(generic.ListView):
     author = None
     context_object_name = 'books'
-    paginate_by = 3
+    # paginate_by = 3
     template_name = 'library/author_detail.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -360,6 +393,8 @@ class AuthorDetailView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['author'] = self.author
-        context['section'] = 'authors'
+        context.update({
+            'section': 'authors',
+            'author': self.author,
+        })
         return context

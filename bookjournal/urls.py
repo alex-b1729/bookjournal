@@ -32,13 +32,12 @@ urlpatterns = [
             path('register/', journal_views.register, name='register'),
         ]),
     ),
-    path('journal/', include('journal.urls')),
     path(
         'books/',
         include([
             path('', journal_views.BookListView.as_view(), name='book_list'),
             path('create/', journal_views.BookCreateView.as_view(), name='book_create'),
-            path('<int:book_pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
+            path('<int:pk>/', journal_views.BookDetailView.as_view(), name='book_detail'),
         ])
     ),
     path(
@@ -49,4 +48,6 @@ urlpatterns = [
             path('<int:author_pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
         ])
     ),
+    path('', journal_views.index, name='index'),
+    path('', include('journal.urls')),
 ]

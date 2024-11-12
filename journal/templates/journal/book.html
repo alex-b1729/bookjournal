@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load entry_tags %}
+
+{% block title %}
+{{ book.title }} | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<h2>{{ book.title }}</h2>
+{% if book.authors %}
+<p>
+    By
+    {% for author in book.authors.all %}
+    <a href="{{ author.get_absolute_url }}">
+        {{ author }}
+    </a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+{% endif %}
+<p>Published: {{ book.published }}</p>
+<p>
+    <a href="{% url 'user_entry_create' book.pk %}">New Entry</a>
+</p>
+
+{% if entries %}
+<ul>
+    {% for entry in entries %}
+    <li>
+        <h4>
+            <a href="{% url 'user_entry_detail' entry.pk %}">
+                {{ entry.publish_dt }}
+            </a>
+            - {{ entry.author }}
+        </h4>
+        <h4>{{ entry.title }}</h4>
+        {% if entry.tags.exists %}
+        <p>
+            Tags:
+            {% for tag in entry.tags.all %}
+            <a href="{% url 'user_journal' %}?tag={{ tag.slug }}">
+                {{ tag }}
+            </a>
+            {% if not forloop.last %} | {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+        <p>{{ entry.body|markdown }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% endblock content %}

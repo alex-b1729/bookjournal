@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 {% load entry_tags %}
 
+{% block title %}
+{{ book.title }} | {{ block.super }}
+{% endblock %}
+
 {% block content %}
 <h2>{{ book.title }}</h2>
 {% if book.authors %}
@@ -15,51 +19,11 @@
 {% endif %}
 <p>Published: {{ book.published }}</p>
 <p>
-    <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'user_entry_create' book.pk %}">New Entry</a>
+    {% else %}
+    <a href="{% url 'login' %}?next=/journal/entry/create/{{ book.pk }}/">Log-in</a> to create an entry.
+    {% endif %}
 </p>
-
-{% if entries %}
-<ul>
-    {% for entry in entries %}
-
-    {% if entry.section %}
-    {% ifchanged entry.section %}
-    <h3>{{ entry.section }}</h3>
-    {% endifchanged %}
-    {% endif %}
-
-    {% if entry.chapter %}
-    {% ifchanged entry.chapter %}
-    <h4>Chapter {{ entry.chapter }}</h4>
-    {% endifchanged %}
-    {% endif %}
-
-    <li>
-        <h4>
-            {% if entry.status == 'd' %}
-            <span>(Draft)</span>
-            {% endif %}
-            <a href="{{ entry.get_absolute_url }}">
-                {{ entry.publish_dt }}
-            </a>
-            - {{ entry.author }}
-        </h4>
-        <h4>{{ entry.title }}</h4>
-        {% if entry.tags.exists %}
-        <p>
-            Tags:
-            {% for tag in entry.tags.all %}
-            <a href="{% url 'entry_list' entry.author.username %}?tag={{ tag.slug }}">
-                {{ tag }}
-            </a>
-            {% if not forloop.last %} | {% endif %}
-            {% endfor %}
-        </p>
-        {% endif %}
-        <p>{{ entry.body|markdown }}</p>
-    </li>
-    {% endfor %}
-</ul>
-{% endif %}
 
 {% endblock content %}

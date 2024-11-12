@@ -5,11 +5,7 @@
         <li>
             <a
                     class="{% if section == 'journal' %}current{% endif %}"
-                    {% if request.user.is_authenticated %}
-                    href="{% url 'entry_list' request.user.username %}">
-                    {% else %}
-                    href="{% url 'feed' %}">
-                    {% endif %}
+                    href="{% url 'user_journal' %}">
                 {% if section == 'journal' %}>{% endif %}
                 Journal
             </a>

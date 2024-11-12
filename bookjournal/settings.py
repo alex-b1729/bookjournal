@@ -135,7 +135,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # uses name attribute of path() in profile/urls.py
-LOGIN_REDIRECT_URL = 'feed'
+LOGIN_REDIRECT_URL = 'user_journal'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'login'
 LOGOUT_URL = 'logout'

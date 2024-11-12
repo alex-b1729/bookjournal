@@ -12,14 +12,16 @@
     {% for book in books %}
     <li>
         <h2>
-            <a href="{{ book.get_absolute_url }}">{{ book }}</a>
+            {% if request.user.is_authenticated %}
+            <a href="{% url 'user_book_entry_list' book.pk %}">{{ book }}</a>
+            {% else %}
+            <a href="{% url 'book_detail' book.pk %}">{{ book }}</a>
+            {% endif %}
             - {{ book.published }}
         </h2>
-        <a href="{% url 'entry_create' request.user.username book.pk %}">New Entry</a>
     </li>
     {% empty %}
     <li>No books for this author.</li>
     {% endfor %}
 </ul>
-{% include 'partials/pagination.html' with page=page_obj %}
 {% endblock content %}
