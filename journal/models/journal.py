@@ -9,11 +9,6 @@ from taggit.managers import TaggableManager
 from . import library
 
 
-class PublishedManager(models.Manager):
-    def get_queryset(self):
-        return super().get_queryset().filter(status=Entry.Status.PUBLISHED)
-
-
 class Visibility(models.TextChoices):
     PRIVATE = 'x', _('Private')
     FOLLOWERS = 'f', _('Followers')
@@ -28,6 +23,7 @@ class Entry(models.Model):
     author = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        editable=False,
     )
     book = models.ForeignKey(
         library.Book,
@@ -71,9 +67,6 @@ class Entry(models.Model):
         auto_now=True,
     )
 
-    objects = models.Manager()
-    published = PublishedManager()
-
     class Meta:
         ordering = ('-publish_dt',)
         verbose_name = 'entry'
@@ -84,3 +77,26 @@ class Entry(models.Model):
 
     def get_absolute_url(self):
         return reverse('entry_detail', args=[self.author.username, self.pk])
+
+
+class Profile(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+    journal_visibility = models.CharField(
+        max_length=1,
+        choices=Visibility,
+        default=Visibility.FOLLOWERS,
+        verbose_name='journal visibility',
+    )
+    default_visibility = models.CharField(
+        max_length=1,
+        choices=Visibility,
+        default=Visibility.PRIVATE,
+        verbose_name='default entry visibility',
+    )
+    about = models.TextField(
+        blank=True,
+    )
