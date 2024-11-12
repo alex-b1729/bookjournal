@@ -185,11 +185,11 @@ class EntryDetailView(
 class AuthorEntryEditMixin(AuthorEntryMixin, AuthorEditMixin):
     fields = (
         'title',
-        'status',
+        'visibility',
         'section',
         'chapter',
-        'body',
         'tags',
+        'body',
     )
     template_name = 'manage/entry.html'
 
@@ -211,6 +211,11 @@ class EntryCreateView(
             pk=kwargs.get('book_pk'),
         )
         return super().dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        return {
+            'visibility': self.request.user.profile.default_visibility,
+        }
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

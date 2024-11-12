@@ -26,8 +26,10 @@ Entry
     {{ form.non_field_errors }}
 
     <div class="fieldWrapper">
-        {{ form.status.as_field_group }}
+        {{ form.visibility.as_field_group }}
     </div>
+
+    <br/>
     <div class="fieldWrapper">
         {% if form.title.errors %}
         <p>{{ form.title.errors }}</p>
@@ -52,12 +54,18 @@ Entry
         {{ form.body }}
     </div>
 
+    <br/>
     <div class="fieldWrapper">
         <p>
             {{ form.section.as_field_group }}
+            {% if not form.section.required %}(optional){% endif %}
+        </p>
+        <p>
             {{ form.chapter.as_field_group }}
-            <br/>
-            Optional. Helpful for sorting journal entries.<br/>
+            {% if not form.chapter.required %}(optional){% endif %}
+        </p>
+        <p>
+            Helpful for organizing journal entries.<br/>
             For example: Section II, chapter 4.
         </p>
     </div>

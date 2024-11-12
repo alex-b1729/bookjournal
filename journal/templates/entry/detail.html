@@ -3,15 +3,13 @@
 
 {% block content %}
 <h1>
-    {% if entry.status == 'd' %}
-    (Draft)
-    {% endif %}
     {% if entry.title %}
     {{ entry.title }}
     {% else %}
     <a href="{{ entry.book.get_absolute_url }}">{{ entry.book }}</a>
     {% endif %}
 </h1>
+<em>Visibility: {{ entry.get_visibility_display }}</em>
 {% if entry.title %}
 <h2>
     <a href="{{ entry.book.get_absolute_url }}">{{ entry.book }}</a>
