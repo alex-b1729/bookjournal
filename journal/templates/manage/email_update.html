@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Update email | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<h3>Update your email</h3>
+<form method="post">
+    {{ form.as_div }}
+    <br/>
+    {% csrf_token %}
+    <input type="submit" value="Save">
+</form>
+{% endblock content %}

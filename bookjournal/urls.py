@@ -26,7 +26,8 @@ urlpatterns = [
     path(
         'account/',
         include([
-            path('', journal_views.account, name='account'),
+            path('', journal_views.AccountView.as_view(), name='account'),
+            path('email/', journal_views.EmailUpdateView.as_view(), name='email_update'),
             path('', include('django.contrib.auth.urls')),
             path('register/', journal_views.register, name='register'),
         ]),

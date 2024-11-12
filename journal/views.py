@@ -3,10 +3,12 @@ from django.contrib import messages
 from django.core.validators import slug_re
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
+from django.contrib.auth import get_user_model
 from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect, get_object_or_404
+from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
 from taggit.models import Tag
 
@@ -46,13 +48,50 @@ def feed(request):
         )
 
 
-@login_required
-def account(request):
-    return render(
-        request,
-        'account.html',
-        {'section': 'account'},
-    )
+class AccountView(
+    LoginRequiredMixin,
+    generic.UpdateView,
+):
+    fields = ('journal_visibility', 'default_visibility', 'about',)
+    template_name = 'account.html'
+    success_url = '/account/'
+
+    def get_object(self, queryset=None):
+        return models.Profile.objects.get(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'account',
+        })
+        return context
+
+    def form_valid(self, form):
+        messages.success(request=self.request, message='Account updated successfully')
+        return super().form_valid(form)
+
+
+class EmailUpdateView(
+    LoginRequiredMixin,
+    generic.UpdateView,
+):
+    fields = ('email',)
+    template_name = 'manage/email_update.html'
+    success_url = '/account/'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'account',
+        })
+        return context
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Email updated successfully')
+        return super().form_valid(form)
 
 
 class AuthorMixin(object):

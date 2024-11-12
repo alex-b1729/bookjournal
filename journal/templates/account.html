@@ -1,5 +1,80 @@
 {% extends 'base.html' %}
 
+{% block title %}
+Account | {{ block.super }}
+{% endblock %}
+
 {% block content %}
-<p>Your account =)</p>
+
+<p>
+    <strong>Username:</strong> {{ request.user.username }}
+    <br/>
+    <strong>Date joined:</strong> {{ request.user.date_joined.date }}
+</p>
+<p>
+    <strong>Email:</strong> {{ request.user.email }}
+    <br/>
+    <em>Your email is private and never displayed to other users.</em>
+    <br/>
+    <a href="{% url 'email_update' %}">Update email</a>
+</p>
+<hr/>
+
+<form method="post">
+    {{ form.non_field_errors }}
+
+    <div>
+        {% if form.journal_visibility.errors %}
+        <p>{{ form.journal_visibility.errors }}</p>
+        {% endif %}
+        <p>
+            <strong>{{ form.journal_visibility.label }}</strong>
+            {{ form.journal_visibility }}
+            <br/>
+            Sets the <em>maximum</em> visibility level of all your journal entries as well as the visibility of your
+            <em>About</em> information below.
+        </p>
+        For example:
+        <ul>
+            <li>
+                <em>Journal visibility: Followers</em> means entries set to <em>Public</em>
+                will only be visible to your followers - as will entries set to <em>Followers</em>.
+                Entries set to <em>Private</em> will remain private to you.
+            </li>
+            <li>
+                <em>Journal visibility: Private</em> means all entries will be private regardless of their
+                individual settings.
+            </li>
+        </ul>
+    </div>
+
+    <div>
+        {% if form.default_visibility.errors %}
+        <p>{{ form.default_visibility.errors }}</p>
+        {% endif %}
+        <p>
+            <strong>{{ form.default_visibility.label }}</strong>
+            {{ form.default_visibility }}
+            <br/>
+            Sets the default visibility of new journal entries.
+            You can change the visibility of individual entries at any time.
+        </p>
+    </div>
+    <br/>
+
+    <div>
+        {% if form.about.errors %}
+        <p>{{ form.about.errors }}</p>
+        {% endif %}
+        <strong><label for="{{ form.about.id_for_label}}">About: </label><br/></strong>
+        {{ form.about }}
+        <br/>
+        Visibility of your about information is controlled by the <em>Journal visibility</em> setting.
+    </div>
+
+    <br/>
+    {% csrf_token %}
+    <input type="submit" value="Save">
+</form>
+
 {% endblock content %}
