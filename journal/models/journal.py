@@ -100,3 +100,14 @@ class Profile(models.Model):
     about = models.TextField(
         blank=True,
     )
+    joined = models.DateTimeField(
+        auto_now_add=True,
+    )
+    logins = models.SmallIntegerField(
+        default=0,
+        editable=False,
+        verbose_name='Number of logins',
+    )
+    last_login = models.DateTimeField(
+        auto_now=True,
+    )
