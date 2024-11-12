@@ -69,7 +69,7 @@ class Entry(models.Model):
         verbose_name_plural = 'entries'
 
     def __str__(self):
-        return f'{self.title if self.title else self.book} - {self.author}'
+        return f'{self.publish_dt} - {self.title if self.title else self.book} - {self.author}'
 
     def get_absolute_url(self):
         return reverse('entry_detail', args=[self.author.username, self.pk])

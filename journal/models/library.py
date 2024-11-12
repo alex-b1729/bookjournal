@@ -53,10 +53,12 @@ class Book(models.Model):
     published = models.SmallIntegerField(
         blank=True,
     )
+    description = models.TextField(
+        blank=True,
+    )
 
     class Meta:
         ordering = (
-            '-published',
             'title',
         )
 
