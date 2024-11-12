@@ -14,6 +14,12 @@ class PublishedManager(models.Manager):
         return super().get_queryset().filter(status=Entry.Status.PUBLISHED)
 
 
+class Visibility(models.TextChoices):
+    PRIVATE = 'x', _('Private')
+    FOLLOWERS = 'f', _('Followers')
+    PUBLIC = 'p', _('Public')
+
+
 class Entry(models.Model):
     class Status(models.TextChoices):
         DRAFT = 'd', _('Draft')
@@ -48,6 +54,11 @@ class Entry(models.Model):
     chapter = models.CharField(
         max_length=200,
         blank=True,
+    )
+    visibility = models.CharField(
+        max_length=1,
+        choices=Visibility,
+        default=Visibility.PRIVATE,
     )
     publish_dt = models.DateTimeField(
         default=timezone.now,
