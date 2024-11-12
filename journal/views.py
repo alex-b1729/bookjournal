@@ -1,4 +1,5 @@
 from django.views import generic
+from django.contrib import messages
 from django.core.validators import slug_re
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
@@ -21,6 +22,7 @@ def register(request):
             new_user = form.save(commit=False)
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
+            messages.success(request, f'Welcome, {new_user.username}.')
             return HttpResponseRedirect(f'{reverse("login")}?next=/account/')
     else:
         form = forms.UserRegistrationForm()
