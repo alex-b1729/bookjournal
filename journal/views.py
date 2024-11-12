@@ -1,7 +1,7 @@
 from django.views import generic
-from django.urls import reverse_lazy
-from django import forms as django_forms
 from django.core.validators import slug_re
+from django.http import HttpResponseRedirect
+from django.urls import reverse_lazy, reverse
 from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -21,11 +21,7 @@ def register(request):
             new_user = form.save(commit=False)
             new_user.set_password(form.cleaned_data['password'])
             new_user.save()
-            return render(
-                request,
-                'registration/register_done.html',
-                {'new_user': new_user},
-            )
+            return HttpResponseRedirect(f'{reverse("login")}?next=/account/')
     else:
         form = forms.UserRegistrationForm()
     return render(

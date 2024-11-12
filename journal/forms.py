@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth import get_user_model
 from django.contrib.auth import password_validation
 
+from .models import Profile
+
 
 class UserRegistrationForm(forms.ModelForm):
     password = forms.CharField(
@@ -40,6 +42,8 @@ class UserRegistrationForm(forms.ModelForm):
         user = super(UserRegistrationForm, self).save(commit=False)
         user.set_password(self.cleaned_data['password2'])
         user.save(commit)
+        profile = Profile(user=user)
+        profile.save()
         return user
 
 
