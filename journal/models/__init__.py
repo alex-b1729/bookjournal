@@ -4,4 +4,5 @@ from .library import (
 )
 from .journal import (
     Entry,
+    Profile,
 )

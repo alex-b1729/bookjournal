@@ -80,9 +80,10 @@ class Entry(models.Model):
 
 
 class Profile(models.Model):
-    user = models.ForeignKey(
+    user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
+        primary_key=True,
         editable=False,
     )
     journal_visibility = models.CharField(
