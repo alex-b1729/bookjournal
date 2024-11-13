@@ -47,45 +47,14 @@ Journal | {{ block.super }}
 
 {% for entry in entries %}
 {% ifchanged entry.book %}
+{% if not forloop.first %}</div>{% endif %}
 <div class="list-header">
     {% include 'render/book_list_header.html' with book=entry.book %}
 </div>
-{% endifchanged %}
-
-{% if entry.section %}
-{% ifchanged entry.section %}
 <div class="indent-1">
-    <h3>{{ entry.section }}</h3>
-</div>
 {% endifchanged %}
-{% endif %}
-
-{% if entry.chapter %}
-{% ifchanged entry.chapter %}
-<div
-        {% if entry.section %}
-        class="indent-2"
-        {% else %}
-        class="indent-1"
-        {% endif %}
->
-    <h3>Chapter {{ entry.chapter }}</h3>
-</div>
-{% endifchanged %}
-{% endif %}
-
-<div
-        {% if entry.section and entry.chapter %}
-        class="indent-3"
-        {% elif entry.section or entry.chapter %}
-        class="indent-2"
-        {% else %}
-        class="indent-1"
-        {% endif %}
->
-    {% include 'render/entry_list_item.html' with entry=entry %}
-</div>
-
+    <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
+{% if forloop.last %}</div>{% endif %}
 {% empty %}
 {% if 'query' in query_params %}
 <p>No entries match your search</p>

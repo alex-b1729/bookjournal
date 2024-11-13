@@ -10,15 +10,18 @@
         <!-- favicon -->
         <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.webp' %}"/>
 
-        <link rel="stylesheet" href="{% static 'css/base.css' %}"/>
+<!--        <link rel="stylesheet" href="{% static 'css/base.css' %}"/>-->
+        <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
         {% endblock %}
 
         <title>{% block title %}BookJournal{% endblock %}</title>
     </head>
     <body>
-        {% block nav %}
-        {% include 'partials/nav.html' %}
-        {% endblock %}
+        <header>
+            {% block nav %}
+            {% include 'partials/nav.html' %}
+            {% endblock %}
+        </header>
 
         {% if messages %}
         <ul class="messages">

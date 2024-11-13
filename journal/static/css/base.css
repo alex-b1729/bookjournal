@@ -4,12 +4,14 @@ nav a.current {
 
 .indent-1 {
     padding-left: 1em;
+    border-left-style: solid;
+    margin-left: 1em;
 }
 
-.indent-2 {
-    padding-left: 2em;
+.entry-list-item {
+    margin-bottom: 3em;
 }
 
-.indent-3 {
-    padding-left: 3em;
+.entry-content {
+    padding-left: 1em;
 }

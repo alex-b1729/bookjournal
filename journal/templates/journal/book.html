@@ -14,31 +14,11 @@
 </p>
 
 {% if entries %}
-<ul>
+<div class="indent-1">
     {% for entry in entries %}
-    <li>
-        <h4>
-            <a href="{% url 'user_entry_detail' entry.pk %}">
-                {{ entry.publish_dt }}
-            </a>
-            - {{ entry.author }}
-        </h4>
-        <h4>{{ entry.title }}</h4>
-        {% if entry.tags.exists %}
-        <p>
-            Tags:
-            {% for tag in entry.tags.all %}
-            <a href="{% url 'user_journal' %}?tag={{ tag.slug }}">
-                {{ tag }}
-            </a>
-            {% if not forloop.last %} | {% endif %}
-            {% endfor %}
-        </p>
-        {% endif %}
-        <p>{{ entry.body|markdown }}</p>
-    </li>
+    <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
     {% endfor %}
-</ul>
+</div>
 {% endif %}
 
 {% endblock content %}

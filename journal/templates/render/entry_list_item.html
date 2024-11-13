@@ -4,6 +4,13 @@
     <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
     - {{ entry.author.username }}
     - <em>{{ entry.get_visibility_display }}</em>
+    {% with sec=entry.section chap=entry.chapter %}
+    {% if sec or chap %}
+    <br/>
+    {{ sec }}{% if sec and chap %},{% endif %}
+    {% if chap %}Chapter {{ chap }}{% endif %}
+    {% endif %}
+    {% endwith %}
 </div>
 <br/>
 

@@ -1,52 +1,32 @@
 {% load static %}
 <nav>
-    <h4>BookJournal</h4>
-    <ul>
-        <li>
-            <a
-                    class="{% if section == 'journal' %}current{% endif %}"
-                    href="{% url 'user_journal' %}">
-                {% if section == 'journal' %}>{% endif %}
-                Journal
-            </a>
-        </li>
-        <li>
-            <a class="{% if section == 'books' %}current{% endif %}" href="{% url 'book_list' %}">
-                {% if section == 'books' %}>{% endif %}
-                Books
-            </a>
-        </li>
-        <li>
-            <a class="{% if section == 'authors' %}current{% endif %}" href="{% url 'author_list' %}">
-                {% if section == 'authors' %}>{% endif %}
-                Authors
-            </a>
-        </li>
-        {% if request.user.is_authenticated %}
-        <li>
-            Hello {{ request.user.username }}
-            <ul>
-                <li>
-                    <a href="{% url 'account' %}">
-                        {% if section == 'account' %}>{% endif %}
-                        Your Account
-                    </a>
-                </li>
-                <li>
-                    <form action="{% url 'logout' %}" method="post">
-                        <button type="submit">Logout</button>
-                        {% csrf_token %}
-                    </form>
-                </li>
-            </ul>
-        </li>
-        {% else %}
-        <li>
-            <a href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
-                Log-in
-            </a>
-        </li>
-        {% endif %}
-    </ul>
+    <a href="/">BookJournal</a>
+    <a
+            class="{% if section == 'journal' %}current{% endif %}"
+            href="{% url 'user_journal' %}">
+        Journal
+    </a>
+    <a
+            class="{% if section == 'books' %}current{% endif %}"
+            href="{% url 'book_list' %}">
+        Books
+    </a>
+    <a
+            class="{% if section == 'authors' %}current{% endif %}"
+            href="{% url 'author_list' %}">
+        Authors
+    </a>
+    {% if request.user.is_authenticated %}
+    <a href="{% url 'account' %}">
+        Hello {{ request.user.username }}
+    </a>
+    <form action="{% url 'logout' %}" method="post">
+        <button type="submit">Logout</button>
+        {% csrf_token %}
+    </form>
+    {% else %}
+    <a href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
+        Log-in
+    </a>
+    {% endif %}
 </nav>
-<hr/>
