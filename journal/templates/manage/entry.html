@@ -8,14 +8,7 @@ Entry
 {% endblock title %}
 
 {% block content %}
-<h1>{{ book.title }}</h1>
-<h2>
-    By
-    {% for author in book.authors.all %}
-    {{ author }}
-    {% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</h2>
+{% include 'render/book_primary.html' with book=book %}
 <h3>
     {% if self.object.pk %}Edit
     {% else %}New
@@ -26,10 +19,17 @@ Entry
     {{ form.non_field_errors }}
 
     <div class="fieldWrapper">
-        {{ form.visibility.as_field_group }}
+        <p>
+            {{ form.section.as_field_group }}
+            {% if not form.section.required %}(optional){% endif %}
+        </p>
+        <p>
+            {{ form.chapter.as_field_group }}
+            {% if not form.chapter.required %}(optional){% endif %}
+        </p>
     </div>
-
     <br/>
+
     <div class="fieldWrapper">
         {% if form.title.errors %}
         <p>{{ form.title.errors }}</p>
@@ -39,6 +39,7 @@ Entry
             {{ form.title }} (optional)
         </p>
     </div>
+
     <div class="fieldWrapper">
         <p>
             <label for="{{ form.tags.id_for_label}}">Tags: </label>
@@ -54,21 +55,10 @@ Entry
         {{ form.body }}
     </div>
 
-    <br/>
     <div class="fieldWrapper">
-        <p>
-            {{ form.section.as_field_group }}
-            {% if not form.section.required %}(optional){% endif %}
-        </p>
-        <p>
-            {{ form.chapter.as_field_group }}
-            {% if not form.chapter.required %}(optional){% endif %}
-        </p>
-        <p>
-            Helpful for organizing journal entries.<br/>
-            For example: Section II, chapter 4.
-        </p>
+        {{ form.visibility.as_field_group }}
     </div>
+    <br/>
 
     <button type="submit">Save</button>
     {% csrf_token %}

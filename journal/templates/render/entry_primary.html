@@ -3,40 +3,33 @@
 {# for request user view only at this point #}
 
 <div class="entry-header">
-    {{ entry.publish_dt }}
-    - {{ entry.author.username }}
-    - <em>{{ entry.get_visibility_display }}</em>
+    <span class="entry-dt">{{ entry.publish_dt }}</span>
+    - <span class="entry-author">{{ entry.author.username }}</span>
+    - <span class="entry-visibility">{{ entry.get_visibility_display }}</span>
 </div>
-<br/>
 
-<div class="entry-book">
-    <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ entry.book.title }}</a>
-    {% if entry.book.published %} - {{ entry.book.published }}{% endif %}
-    {% if entry.book.authors %}
-    -
-    {% for author in entry.book.authors.all %}
-    <a href="{{ author.get_absolute_url }}">
-        {{ author }}
-    </a>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-    {% endif %}
-    {% with sec=entry.section chap=entry.chapter %}
-    {% if sec or chap %}
-    <br/>
-    <br/>
-    {% endif %}
-    {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
-    {% if chap %}Chapter {{ chap }}{% endif %}
-    {% endwith %}
-</div>
-<br/>
-
-<div class="entry-content">
-    {% if entry.title %}
-    <h1 class="entry-title">
-        {{ entry.title }}
-    </h1>
-    {% endif %}
+<div class="entry-body">
+    <div class="entry-book">
+        <a href="{% url 'user_book_entry_list' entry.book.pk %}" class="entry-book-title">
+            {{ entry.book.title }}
+        </a>
+        {% if entry.book.published %} - {{ entry.book.published }}{% endif %}
+        {% if entry.book.authors %}
+        -
+        {% for author in entry.book.authors.all %}
+        <a href="{{ author.get_absolute_url }}">
+            {{ author }}
+        </a>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        {% endif %}
+        {% with sec=entry.section chap=entry.chapter %}
+        {% if sec or chap %}
+        <br/>
+        {% endif %}
+        {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+        {% if chap %}Chapter {{ chap }}{% endif %}
+        {% endwith %}
+    </div>
 
     {% with tags=entry.tags %}
     {% if tags %}
@@ -46,5 +39,13 @@
     {% endif %}
     {% endwith %}
 
-    <div class="entry-body">{{ entry.body|markdown|linebreaks }}</div>
+    <div class="entry-content">
+        {% if entry.title %}
+        <h1 class="entry-title">
+            {{ entry.title }}
+        </h1>
+        {% endif %}
+
+        <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
+    </div>
 </div>

@@ -26,7 +26,8 @@
     <div class="nav-end">
         {% if request.user.is_authenticated %}
         Hello {{ request.user.username }}
-        <a href="{% url 'account' %}">
+        <a href="{% url 'account' %}" class="{% if section == 'account' %}current{% endif %}">
+            {% if section == 'account' %}>{% endif %}
             Account
         </a>
         <form action="{% url 'logout' %}" method="post">

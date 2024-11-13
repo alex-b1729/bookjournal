@@ -2,10 +2,11 @@
     <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ book.title }}</a>
     {% if book.published %}- {{ book.published }}{% endif %}
 </h2>
-<p class="book-author-container">
+<h3 class="book-author-container">
+    By:
     {% for author in book.authors.all %}
     <a href="{{ author.get_absolute_url }}" class="book-author">
         {{ author }}
     </a>{% if not forloop.last %}, {% endif %}
     {% endfor %}
-</p>
+</h3>

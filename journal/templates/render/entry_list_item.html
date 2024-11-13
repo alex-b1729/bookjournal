@@ -1,25 +1,22 @@
 {% load entry_tags %}
 
 <div class="entry-header">
-    <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
-    - {{ entry.author.username }}
-    - <em>{{ entry.get_visibility_display }}</em>
+    <span class="entry-dt">
+        <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
+    </span>
+    - <span class="entry-author">{{ entry.author.username }}</span>
+    - <span class="entry-visibility">{{ entry.get_visibility_display }}</span>
+</div>
+
+<div class="entry-body">
     {% with sec=entry.section chap=entry.chapter %}
     {% if sec or chap %}
-    <br/>
-    {{ sec }}{% if sec and chap %},{% endif %}
-    {% if chap %}Chapter {{ chap }}{% endif %}
+    <div class="entry-book">
+        {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+        {% if chap %}Chapter {{ chap }}{% endif %}
+    </div>
     {% endif %}
     {% endwith %}
-</div>
-<br/>
-
-<div class="entry-content">
-    {% if entry.title %}
-    <h3 class="entry-title">
-        {{ entry.title }}
-    </h3>
-    {% endif %}
 
     {% with tags=entry.tags %}
     {% if tags %}
@@ -29,5 +26,13 @@
     {% endif %}
     {% endwith %}
 
-    <div class="entry-body">{{ entry.body|markdown|linebreaks }}</div>
+    <div class="entry-content">
+        {% if entry.title %}
+        <h1 class="entry-title">
+            {{ entry.title }}
+        </h1>
+        {% endif %}
+
+        <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
+    </div>
 </div>

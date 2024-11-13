@@ -1,7 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Authors</h1>
+<div class="page-title">
+    <h2>Authors</h2>
+
+    <form method="get">
+        <p>
+            {{ form.query }}
+            <input type="submit" value="Search"/>
+        </p>
+    </form>
+</div>
+
+
+{% if 'query' in query_params %}
+{% with num=page_obj.paginator.count %}
+<h3>
+    {{ num }} result{{ num|pluralize }} matching the query "{{ query_params.query }}"
+    <a href="{% url 'author_list' %}">
+        Clear
+    </a>
+</h3>
+{% endwith %}
+{% endif %}
+
 <div>
     <ul>
         {% for author in authors %}

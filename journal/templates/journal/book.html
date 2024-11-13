@@ -10,7 +10,9 @@
 {% include 'render/book_primary.html' with book=book %}
 
 <p>
-    <a href="{% url 'user_entry_create' book.pk %}">New Entry</a>
+    <a href="{% url 'user_entry_create' book.pk %}" class="btn">
+        + New Entry
+    </a>
 </p>
 
 {% if entries %}

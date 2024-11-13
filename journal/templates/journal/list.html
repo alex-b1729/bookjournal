@@ -6,16 +6,17 @@ Journal | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<h1>
-    Entries
-</h1>
-
-<form method="get">
-    <p>
-        {{ form.query }}
-        <input type="submit" value="Search"/>
-    </p>
-</form>
+<div class="page-title">
+    <h2>
+        Journal
+    </h2>
+    <form method="get">
+        <p>
+            {{ form.query }}
+            <input type="submit" value="Search"/>
+        </p>
+    </form>
+</div>
 
 {% if 'query' in query_params %}
 {% with num=page_obj.paginator.count %}
@@ -49,6 +50,9 @@ Journal | {{ block.super }}
 {% endifchanged %}
     <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
 {% if forloop.last %}</div>{% endif %}
+
+{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
+
 {% empty %}
 {% if 'query' in query_params %}
 <p>No entries match your search</p>
@@ -56,10 +60,9 @@ Journal | {{ block.super }}
 <p>
     You don't have any entries yet.
     <br/>
-    Find a <a href="{% url 'book_list' %}">book</a> to and start journaling.
+    Find a <a href="{% url 'book_list' %}">book</a> and start journaling.
 </p>
 {% endif %}
 {% endfor %}
 
-{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
 {% endblock content %}
