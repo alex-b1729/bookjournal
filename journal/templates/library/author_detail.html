@@ -3,9 +3,13 @@
 {# this is really setup like a book list view but filtered by an author #}
 
 {% block content %}
+<p>
+    <a href="{% url 'author_list' %}">< Authors</a>
+</p>
+
 <h2>{{ author }}</h2>
 {% if author.aka %}
-<p>({{ author.full_name }})</p>
+<p>(<em>{{ author.full_name }}</em>)</p>
 {% endif %}
 
 <ul>

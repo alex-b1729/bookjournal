@@ -7,9 +7,8 @@ Journal | {{ block.super }}
 
 {% block content %}
 <div class="page-title">
-    <h2>
-        Journal
-    </h2>
+    <h2>Journal</h2>
+
     <form method="get">
         <p>
             {{ form.query }}
@@ -45,13 +44,16 @@ Journal | {{ block.super }}
 {% if not forloop.first %}</div>{% endif %}
 <div class="list-header">
     {% include 'render/book_list_header.html' with book=entry.book %}
+    <p>
+        <a href="{% url 'user_entry_create' entry.book.pk %}" class="btn">
+            + New Entry
+        </a>
+    </p>
 </div>
 <div class="indent-1">
 {% endifchanged %}
     <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
 {% if forloop.last %}</div>{% endif %}
-
-{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
 
 {% empty %}
 {% if 'query' in query_params %}
@@ -64,5 +66,9 @@ Journal | {{ block.super }}
 </p>
 {% endif %}
 {% endfor %}
+
+{% if entries %}
+{% include 'partials/pagination.html' with page=page_obj query_params=query_params %}
+{% endif %}
 
 {% endblock content %}

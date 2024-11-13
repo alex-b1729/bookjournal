@@ -16,7 +16,7 @@
 {% if 'query' in query_params %}
 {% with num=page_obj.paginator.count %}
 <h3>
-    {{ num }} result{{ num|pluralize }} matching the query "{{ query_params.query }}"
+    {{ num }} author{{ num|pluralize }} matching the query "{{ query_params.query }}"
     <a href="{% url 'author_list' %}">
         Clear
     </a>
@@ -35,7 +35,7 @@
             </h2>
             {% with books=author.book_set %}
             {% if books %}
-            <p>{{ books.count }} books</p>
+            <p>{{ books.count }} book{{ books.count|pluralize }}</p>
             {% else %}
             <p>No books databased for this author</p>
             {% endif %}

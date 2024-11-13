@@ -6,6 +6,14 @@
 {% endblock title %}
 
 {% block content %}
+<p>
+    <a href="{% url 'user_journal' %}">< Journal</a>
+    <br/>
+    <a href="{% url 'author_list' %}">< Authors</a>
+    <br/>
+    <a href="{% url 'book_list' %}">< Books</a>
+</p>
+
 <h2>{{ author }}</h2>
 
 {% if entries %}

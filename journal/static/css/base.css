@@ -113,6 +113,12 @@ a.btn:hover, a.btn:active {
     border-style: ridge;
 }
 
+.entry-title {
+    margin-block-start: 0em;
+    padding-bottom: 0.33em;
+    border-bottom: 1px solid gray;
+}
+
 .entry-body p {
     display: block;
     margin-block-start: 0em;

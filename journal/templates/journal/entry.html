@@ -6,5 +6,6 @@ Entry | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
+<p><a href="{% url 'user_journal' %}">< Journal</a></p>
 {% include 'render/entry_primary.html' with entry=entry %}
 {% endblock content %}

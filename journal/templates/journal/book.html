@@ -6,6 +6,11 @@
 {% endblock title %}
 
 {% block content %}
+<p>
+    <a href="{% url 'user_journal' %}">< Journal</a>
+    <br/>
+    <a href="{% url 'book_list' %}">< Books</a>
+</p>
 
 {% include 'render/book_primary.html' with book=book %}
 
