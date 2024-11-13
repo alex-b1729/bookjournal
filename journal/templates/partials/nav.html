@@ -4,12 +4,14 @@
         <a href="/">BookJournal</a>
     </div>
     <div class="nav-primary">
+        {% if request.user.is_authenticated %}
         <a
                 class="{% if section == 'journal' %}current{% endif %}"
                 href="{% url 'user_journal' %}">
             {% if section == 'journal' %}>{% endif %}
             Journal
         </a>
+        {% endif %}
         <a
                 class="{% if section == 'books' %}current{% endif %}"
                 href="{% url 'book_list' %}">

@@ -173,4 +173,5 @@ blockquote {
 
 footer {
     margin-top: 3em;
+    border-top-style: solid;
 }

@@ -17,7 +17,10 @@ from journal import models
 
 
 def index(request):
-    return HttpResponse('you\'ve found the index page =)')
+    return render(
+        request,
+        'index.html',
+    )
 
 
 def register(request):
@@ -126,7 +129,7 @@ class UserJournal(
 ):
     """ListView of all request.user's entries"""
     context_object_name = 'entries'
-    paginate_by = 5
+    paginate_by = 50
     template_name = 'journal/list.html'
     query_params = {}
     tag = None
@@ -299,7 +302,7 @@ class BookCreateView(
 
 class BookListView(generic.ListView):
     context_object_name = 'books'
-    paginate_by = 3
+    paginate_by = 50
     template_name = 'library/book_list.html'
     query_params = {}
     form = forms.SearchForm()
@@ -365,7 +368,7 @@ class AuthorCreateView(
 
 class AuthorListView(generic.ListView):
     context_object_name = 'authors'
-    paginate_by = 3
+    paginate_by = 50
     template_name = 'library/author_list.html'
     query_params = {}
     form = forms.SearchForm()

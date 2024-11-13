@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>BookJournal</h1>
+<p>
+    Hey there, this is <strong>BookJournal</strong> - a bare-bones book journaling app.
+</p>
+<p>
+    You can browse <a href="{% url 'book_list' %}">books</a> and <a href="{% url 'author_list' %}">authors</a>
+    without an account.
+</p>
+<p>
+    <a href="{% url 'register' %}">Create a username</a> or <a href="{% url 'login' %}">log-in</a> to get started journaling your books.
+</p>
+<ul>
+    <li>Checkout an <a href="#">example journal</a></li>
+    <li>See the <a href="#">how-to guide</a></li>
+    <li>Read the <a href="#">why</a></li>
+    <li><a href="#">FAQs</a> - although "<em>frequently</em>" is a stretch</li>
+</ul>
+{% endblock content %}
