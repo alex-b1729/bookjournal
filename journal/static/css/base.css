@@ -1,5 +1,56 @@
+#page {
+    margin: auto;
+    max-width: 900px;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 900px) {
+    nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .nav-logo, .nav-primary, .nav-end {
+        margin-bottom: 0.5em;
+    }
+}
+
+nav {
+    padding-bottom: 1em;
+    border-bottom-style: solid;
+    margin-bottom: 3em;
+}
+
+.nav-primary, .nav-end {
+    display: flex;
+}
+
+nav a, nav form {
+    margin-left: 1em;
+}
+
 nav a.current {
     font-weight: bold;
+}
+
+a.tag:link, a.tag:visited {
+    background-color: #f0f0f0;
+    color: black;
+    padding: 1px 4px;
+    margin-right: 3px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    border-style: solid;
+    border-color: LightGray;
+}
+
+a.tag:hover, a.tag:active {
+    background-color: #b4b4b4;
 }
 
 .indent-1 {
@@ -13,5 +64,16 @@ nav a.current {
 }
 
 .entry-content {
+    padding: 1em;
+    border-style: ridge;
+}
+
+blockquote {
+    background-color: #f0f0f0;
+    border-left: 5px solid #b4b4b4;
     padding-left: 1em;
+}
+
+footer {
+    margin-top: 3em;
 }

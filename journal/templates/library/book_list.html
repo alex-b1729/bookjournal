@@ -5,12 +5,12 @@ Books | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<h2>
+<h1>
     Books
     {% if 'query' in query_params %}
     matching the query "{{ query_params.query }}"
     {% endif %}
-</h2>
+</h1>
 
 <form method="get">
     <p>
@@ -21,12 +21,12 @@ Books | {{ block.super }}
 
 {% if 'query' in query_params %}
 {% with num=page_obj.paginator.count %}
-<h3>
+<h2>
     {{ num }} result{{ num|pluralize }}
     <a href="{% url 'book_list' %}">
         Clear
     </a>
-</h3>
+</h2>
 {% endwith %}
 {% endif %}
 

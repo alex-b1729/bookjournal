@@ -1,32 +1,42 @@
 {% load static %}
 <nav>
-    <a href="/">BookJournal</a>
-    <a
-            class="{% if section == 'journal' %}current{% endif %}"
-            href="{% url 'user_journal' %}">
-        Journal
-    </a>
-    <a
-            class="{% if section == 'books' %}current{% endif %}"
-            href="{% url 'book_list' %}">
-        Books
-    </a>
-    <a
-            class="{% if section == 'authors' %}current{% endif %}"
-            href="{% url 'author_list' %}">
-        Authors
-    </a>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'account' %}">
+    <div class="nav-logo">
+        <a href="/">BookJournal</a>
+    </div>
+    <div class="nav-primary">
+        <a
+                class="{% if section == 'journal' %}current{% endif %}"
+                href="{% url 'user_journal' %}">
+            {% if section == 'journal' %}>{% endif %}
+            Journal
+        </a>
+        <a
+                class="{% if section == 'books' %}current{% endif %}"
+                href="{% url 'book_list' %}">
+            {% if section == 'books' %}>{% endif %}
+            Books
+        </a>
+        <a
+                class="{% if section == 'authors' %}current{% endif %}"
+                href="{% url 'author_list' %}">
+            {% if section == 'authors' %}>{% endif %}
+            Authors
+        </a>
+    </div>
+    <div class="nav-end">
+        {% if request.user.is_authenticated %}
         Hello {{ request.user.username }}
-    </a>
-    <form action="{% url 'logout' %}" method="post">
-        <button type="submit">Logout</button>
-        {% csrf_token %}
-    </form>
-    {% else %}
-    <a href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
-        Log-in
-    </a>
-    {% endif %}
+        <a href="{% url 'account' %}">
+            Account
+        </a>
+        <form action="{% url 'logout' %}" method="post">
+            <button type="submit">Logout</button>
+            {% csrf_token %}
+        </form>
+        {% else %}
+        <a href="{% url 'login' %}{% if request.path != '/' %}?next={{ request.path }}{% endif %}">
+            Log-in
+        </a>
+        {% endif %}
+    </div>
 </nav>

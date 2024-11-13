@@ -6,15 +6,9 @@ Journal | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<h2>
+<h1>
     Entries
-    {% if tag %}
-    tagged with "{{ tag.name }}"
-    {% endif %}
-    {% if 'query' in query_params %}
-    matching the query "{{ query_params.query }}"
-    {% endif %}
-</h2>
+</h1>
 
 <form method="get">
     <p>
@@ -26,7 +20,7 @@ Journal | {{ block.super }}
 {% if 'query' in query_params %}
 {% with num=page_obj.paginator.count %}
 <h3>
-    {{ num }} result{{ num|pluralize }}
+    {{ num }} result{{ num|pluralize }} matching the query "{{ query_params.query }}"
     <a href="{% url 'user_journal' %}">
         Clear
     </a>
@@ -37,7 +31,7 @@ Journal | {{ block.super }}
 {% if 'tag' in query_params %}
 {% with num=page_obj.paginator.count %}
 <h3>
-    {{ num }} result{{ num|pluralize }} with tag
+    {{ num }} result{{ num|pluralize }} tagged with "{{ tag.name }}"
     <a href="{% url 'user_journal' %}">
         Clear
     </a>

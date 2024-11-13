@@ -21,14 +21,13 @@
     </h3>
     {% endif %}
 
-    {% if entry.tags.exists %}
+    {% with tags=entry.tags %}
+    {% if tags %}
     <div class="tag-container">
-        {% for tag in entry.tags.all %}
-        <a href="{% url 'user_journal' %}?tag={{ tag.slug }}" class="tag">{{ tag }}</a>
-        {% if not forloop.last %} | {% endif %}
-        {% endfor %}
+        {% include 'render/tag_partial.html' with tags=tags %}
     </div>
     {% endif %}
+    {% endwith %}
 
     <div class="entry-body">{{ entry.body|markdown|linebreaks }}</div>
 </div>
