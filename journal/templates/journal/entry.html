@@ -7,5 +7,28 @@ Entry | {{ block.super }}
 
 {% block content %}
 <p><a href="{% url 'user_journal' %}">< Journal</a></p>
+
+<div class="book-title">
+    <h1>
+        <a href="{% url 'user_book_entry_list' entry.book.pk %}">
+            {{ entry.book.title }}
+        </a>
+        {% if entry.book.published %}- {{ entry.book.published }}{% endif %}
+    </h1>
+    <p>
+        <a href="{% url 'user_entry_create' entry.book.pk %}" class="btn">
+            + New Entry
+        </a>
+    </p>
+</div>
+<h3 class="book-author-container">
+    By:
+    {% for author in entry.book.authors.all %}
+    <a href="{{ author.get_absolute_url }}" class="book-author">
+        {{ author }}
+    </a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</h3>
+
 {% include 'render/entry_primary.html' with entry=entry %}
 {% endblock content %}

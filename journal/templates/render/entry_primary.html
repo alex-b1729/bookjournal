@@ -9,28 +9,6 @@
 </div>
 
 <div class="entry-body">
-    <div class="entry-book">
-        <a href="{% url 'user_book_entry_list' entry.book.pk %}" class="entry-book-title">
-            {{ entry.book.title }}
-        </a>
-        {% if entry.book.published %} - {{ entry.book.published }}{% endif %}
-        {% if entry.book.authors %}
-        -
-        {% for author in entry.book.authors.all %}
-        <a href="{{ author.get_absolute_url }}">
-            {{ author }}
-        </a>{% if not forloop.last %}, {% endif %}
-        {% endfor %}
-        {% endif %}
-        {% with sec=entry.section chap=entry.chapter %}
-        {% if sec or chap %}
-        <br/>
-        {% endif %}
-        {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
-        {% if chap %}Chapter {{ chap }}{% endif %}
-        {% endwith %}
-    </div>
-
     {% with tags=entry.tags %}
     {% if tags %}
     <div class="tag-container">
@@ -48,4 +26,11 @@
 
         <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
     </div>
+
+    {% block editentry %}
+    <p>
+        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit</a>
+        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+    </p>
+    {% endblock %}
 </div>

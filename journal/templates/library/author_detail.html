@@ -12,20 +12,23 @@
 <p>(<em>{{ author.full_name }}</em>)</p>
 {% endif %}
 
-<ul>
-    {% for book in books %}
-    <li>
-        <h2>
-            {% if request.user.is_authenticated %}
-            <a href="{% url 'user_book_entry_list' book.pk %}">{{ book }}</a>
-            {% else %}
-            <a href="{% url 'book_detail' book.pk %}">{{ book }}</a>
-            {% endif %}
-            - {{ book.published }}
-        </h2>
-    </li>
-    {% empty %}
-    <li>No books for this author.</li>
-    {% endfor %}
-</ul>
+{% for book in books %}
+<div class="book-title box">
+    <h2>
+        {% if request.user.is_authenticated %}
+        <a href="{% url 'user_book_entry_list' book.pk %}">{{ book }}</a>
+        {% else %}
+        <a href="{% url 'book_detail' book.pk %}">{{ book }}</a>
+        {% endif %}
+        - {{ book.published }}
+    </h2>
+    <p>
+        <a href="{% url 'user_entry_create' book.pk %}" class="btn">
+            + New Entry
+        </a>
+    </p>
+</div>
+{% empty %}
+No books for this author.
+{% endfor %}
 {% endblock content %}

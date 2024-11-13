@@ -12,13 +12,9 @@
     <a href="{% url 'book_list' %}">< Books</a>
 </p>
 
-{% include 'render/book_primary.html' with book=book %}
+<h2>Entries for: </h2>
 
-<p>
-    <a href="{% url 'user_entry_create' book.pk %}" class="btn">
-        + New Entry
-    </a>
-</p>
+{% include 'render/book_primary.html' with book=book %}
 
 {% if entries %}
 <div class="indent-1">
@@ -26,6 +22,8 @@
     <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
     {% endfor %}
 </div>
+{% else %}
+You don't have any entries for {{ book.title }} yet.
 {% endif %}
 
 {% endblock content %}

@@ -52,8 +52,8 @@ nav a.current {
 a.tag:link, a.tag:visited {
     background-color: #f0f0f0;
     color: green;
-    padding: 1px 4px;
-    margin-right: 3px;
+    padding: 0px 4px;
+    margin: 0.1em;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -81,10 +81,35 @@ a.btn:hover, a.btn:active {
     background-color: orange;
 }
 
+a.btn-clear:link, a.btn-clear:visited {
+    color: red;
+    border-color: red;
+}
+
+a.btn-clear:hover, a.btn-clear:active {
+    background-color: DarkGray;
+}
+
 .indent-1 {
     padding-left: 1em;
     border-left-style: solid;
     margin-left: 1em;
+}
+
+.book-title {
+    margin: 1em 0em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    h1, h2, h3, h4, h5, h6, p {
+        margin: 0em;
+    }
+}
+
+.box {
+    padding: 0.33em 1em;;
+    border-style: ridge;
+    margin: 1em;
 }
 
 .entry-dt {
@@ -111,6 +136,7 @@ a.btn:hover, a.btn:active {
 .entry-content {
     padding: 1em;
     border-style: ridge;
+    margin-bottom: 1em;
 }
 
 .entry-title {
@@ -135,7 +161,7 @@ a.btn:hover, a.btn:active {
 blockquote {
     background-color: #f0f0f0;
     border-left: 5px solid #b4b4b4;
-    padding-left: 1em;
+    padding: 0em 1em;
 }
 
 @media screen and (max-width: 900px) {

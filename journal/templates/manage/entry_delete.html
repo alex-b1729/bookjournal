@@ -1,6 +1,12 @@
 {% extends 'base.html' %}
+{% load entry_tags %}
+
+{% block title %}
+Delete Entry | {{ block.super }}
+{% endblock title %}
 
 {% block content %}
+<p><a href="{% url 'user_entry_detail' object.pk %}">< Cancel</a></p>
 <h1>Delete Entry</h1>
 <form method="post">
     {% csrf_token %}

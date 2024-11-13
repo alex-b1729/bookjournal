@@ -35,4 +35,9 @@
 
         <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
     </div>
+
+    <p>
+        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit Entry</a>
+        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+    </p>
 </div>

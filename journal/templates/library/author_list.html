@@ -25,24 +25,22 @@
 {% endif %}
 
 <div>
-    <ul>
-        {% for author in authors %}
-        <li>
-            <h2>
-                <a href="{{ author.get_absolute_url }}">
-                    {{ author }}
-                </a>
-            </h2>
-            {% with books=author.book_set %}
-            {% if books %}
-            <p>{{ books.count }} book{{ books.count|pluralize }}</p>
-            {% else %}
-            <p>No books databased for this author</p>
-            {% endif %}
-            {% endwith %}
-        </li>
-        {% endfor %}
-    </ul>
+    {% for author in authors %}
+    <div class="box">
+        <h2>
+            <a href="{{ author.get_absolute_url }}">
+                {{ author }}
+            </a>
+        </h2>
+        {% with books=author.book_set %}
+        {% if books %}
+        <p>{{ books.count }} book{{ books.count|pluralize }}</p>
+        {% else %}
+        <p>No books databased for this author</p>
+        {% endif %}
+        {% endwith %}
+    </div>
+    {% endfor %}
 </div>
 
 {% include 'partials/pagination.html' with page=page_obj %}

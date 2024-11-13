@@ -1,7 +1,14 @@
-<h2 class="book-title">
-    <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ book.title }}</a>
-    {% if book.published %}- {{ book.published }}{% endif %}
-</h2>
+<div class="book-title">
+    <h2>
+        <a href="{% url 'user_book_entry_list' book.pk %}">{{ book.title }}</a>
+        {% if book.published %}- {{ book.published }}{% endif %}
+    </h2>
+    <p>
+        <a href="{% url 'user_entry_create' book.pk %}" class="btn">
+            + New Entry
+        </a>
+    </p>
+</div>
 <h3 class="book-author-container">
     By:
     {% for author in book.authors.all %}
