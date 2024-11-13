@@ -364,14 +364,43 @@ class AuthorCreateView(
 
 
 class AuthorListView(generic.ListView):
-    queryset = models.Author.objects.all()
     context_object_name = 'authors'
     paginate_by = 3
     template_name = 'library/author_list.html'
+    query_params = {}
+    form = forms.SearchForm()
+    query = None
+    results = []
+
+    def dispatch(self, request, *args, **kwargs):
+        self.query_params = {}
+        if 'query' in request.GET:
+            self.form = forms.SearchForm(request.GET)
+            if self.form.is_valid():
+                self.query = self.form.cleaned_data['query']
+                self.query_params['query'] = self.query
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = models.Author.objects.all()
+        if self.query:
+            qs = qs.annotate(
+                search=SearchVector(
+                    'first_name',
+                    'middle_name',
+                    'last_name',
+                    'aka',
+                ),
+            ).filter(search=self.query)
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['section'] = 'authors'
+        context.update({
+            'section': 'authors',
+            'form': self.form,
+            'query_params': self.query_params,
+        })
         return context
 
 
