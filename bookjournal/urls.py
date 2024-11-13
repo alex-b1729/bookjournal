@@ -16,9 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.contrib.sitemaps.views import sitemap
 from django.contrib.auth import views as auth_views
 
 from journal import views as journal_views
+from journal import sitemaps as journal_sitemaps
+
+sitemaps = {
+    'authors': journal_sitemaps.AuthorSitemap,
+    'books': journal_sitemaps.BookSitemap,
+}
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -50,4 +57,10 @@ urlpatterns = [
     ),
     path('', journal_views.index, name='index'),
     path('', include('journal.urls')),
+    path(
+        'sitemap.xml',
+        sitemap,
+        {'sitemaps': sitemaps},
+        name='django.contrib.sitemaps.views.sitemap'
+    ),
 ]
