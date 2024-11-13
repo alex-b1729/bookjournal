@@ -1,0 +1,27 @@
+{% load entry_tags %}
+
+<div class="entry-header">
+    <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
+    - {{ entry.author.username }}
+    - <em>{{ entry.get_visibility_display }}</em>
+</div>
+<br/>
+
+<div class="entry-content">
+    {% if entry.title %}
+    <h3 class="entry-title">
+        {{ entry.title }}
+    </h3>
+    {% endif %}
+
+    {% if entry.tags.exists %}
+    <div class="tag-container">
+        {% for tag in entry.tags.all %}
+        <a href="{% url 'user_journal' %}?tag={{ tag.slug }}" class="tag">{{ tag }}</a>
+        {% if not forloop.last %} | {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="entry-body">{{ entry.body|markdown|linebreaks }}</div>
+</div>

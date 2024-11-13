@@ -1,0 +1,17 @@
+<h1 class="book-title">{{ book.title }}</h1>
+
+{% if book.authors %}
+<p class="book-authors-container">
+    {% for author in book.authors.all %}
+    <a href="{{ author.get_absolute_url }}" class="book-authors">
+        {{ author }}
+    </a>{% if not forloop.last %}, {% endif %}
+    {% endfor %}
+</p>
+{% endif %}
+
+{% if book.published %}
+<p class="book-published">
+    {{ book.published }}
+</p>
+{% endif %}

@@ -34,72 +34,67 @@ Journal | {{ block.super }}
 {% endwith %}
 {% endif %}
 
+{% if 'tag' in query_params %}
+{% with num=page_obj.paginator.count %}
+<h3>
+    {{ num }} result{{ num|pluralize }} with tag
+    <a href="{% url 'user_journal' %}">
+        Clear
+    </a>
+</h3>
+{% endwith %}
+{% endif %}
+
 {% for entry in entries %}
 {% ifchanged entry.book %}
-{% if not forloop.first %}</ul>{% endif %}
-<h3>
-    <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ entry.book.title }}</a>
-    - {{ entry.book.published }}
-</h3>
-<p>
-    {% for author in entry.book.authors.all %}
-    <a href="{{ author.get_absolute_url }}">{{ author }}</a>
-    {% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</p>
-<ul>
+<div class="list-header">
+    {% include 'render/book_list_header.html' with book=entry.book %}
+</div>
 {% endifchanged %}
 
-    {% if entry.section %}
-    {% ifchanged entry.section %}
+{% if entry.section %}
+{% ifchanged entry.section %}
+<div class="indent-1">
     <h3>{{ entry.section }}</h3>
-    {% endifchanged %}
-    {% endif %}
-
-    {% if entry.chapter %}
-    {% ifchanged entry.chapter %}
-    <h4>Chapter {{ entry.chapter }}</h4>
-    {% endifchanged %}
-    {% endif %}
-
-    <li>
-        <h4>
-            {% if entry.status == 'd' %}
-            <span>(Draft)</span>
-            {% endif %}
-            <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
-            - {{ entry.author }}
-        </h4>
-        <p>
-            {% with sec=entry.section chap=entry.chapter %}
-            {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
-            {% if chap %}Chapter {{ chap }}{% endif %}
-            {% endwith %}
-        </p>
-        {% if entry.title %}
-        <h4>{{ entry.title }}</h4>
-        {% endif %}
-        {% if entry.tags.exists %}
-        <p>
-            Tags:
-            {% for tag in entry.tags.all %}
-            <a href="{% url 'user_journal' %}?tag={{ tag.slug }}">
-                {{ tag }}
-            </a>
-            {% if not forloop.last %} | {% endif %}
-            {% endfor %}
-        </p>
-        {% endif %}
-        <p>{{ entry.body|markdown }}</p>
-    </li>
-{% if forloop.last %}
-</ul>
+</div>
+{% endifchanged %}
 {% endif %}
+
+{% if entry.chapter %}
+{% ifchanged entry.chapter %}
+<div
+        {% if entry.section %}
+        class="indent-2"
+        {% else %}
+        class="indent-1"
+        {% endif %}
+>
+    <h3>Chapter {{ entry.chapter }}</h3>
+</div>
+{% endifchanged %}
+{% endif %}
+
+<div
+        {% if entry.section and entry.chapter %}
+        class="indent-3"
+        {% elif entry.section or entry.chapter %}
+        class="indent-2"
+        {% else %}
+        class="indent-1"
+        {% endif %}
+>
+    {% include 'render/entry_list_item.html' with entry=entry %}
+</div>
+
 {% empty %}
 {% if 'query' in query_params %}
 <p>No entries match your search</p>
 {% else %}
-<p>You don't have any entries yet</p>
+<p>
+    You don't have any entries yet.
+    <br/>
+    Find a <a href="{% url 'book_list' %}">book</a> to and start journaling.
+</p>
 {% endif %}
 {% endfor %}
 

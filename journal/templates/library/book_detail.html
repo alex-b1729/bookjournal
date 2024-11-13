@@ -6,24 +6,11 @@
 {% endblock %}
 
 {% block content %}
-<h2>{{ book.title }}</h2>
-{% if book.authors %}
+
+{% include 'render/book_primary.html' with book=book %}
+
 <p>
-    By
-    {% for author in book.authors.all %}
-    <a href="{{ author.get_absolute_url }}">
-        {{ author }}
-    </a>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</p>
-{% endif %}
-<p>Published: {{ book.published }}</p>
-<p>
-    {% if request.user.is_authenticated %}
-    <a href="{% url 'user_entry_create' book.pk %}">New Entry</a>
-    {% else %}
     <a href="{% url 'login' %}?next=/journal/entry/create/{{ book.pk }}/">Log-in</a> to create an entry.
-    {% endif %}
 </p>
 
 {% endblock content %}

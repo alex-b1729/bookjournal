@@ -1,3 +1,15 @@
 nav a.current {
     font-weight: bold;
 }
+
+.indent-1 {
+    padding-left: 1em;
+}
+
+.indent-2 {
+    padding-left: 2em;
+}
+
+.indent-3 {
+    padding-left: 3em;
+}

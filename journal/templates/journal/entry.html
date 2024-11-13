@@ -6,49 +6,5 @@ Entry | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<h1>
-    {% if entry.title %}
-    {{ entry.title }}
-    {% else %}
-    <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ entry.book }}</a>
-    {% endif %}
-</h1>
-<em>Visibility: {{ entry.get_visibility_display }}</em>
-{% if entry.title %}
-<h2>
-    <a href="{% url 'user_book_entry_list' entry.book.pk %}">{{ entry.book }}</a>
-</h2>
-{% endif %}
-{% with authors=entry.book.authors.all %}
-{% if authors %}
-<h3>
-    Author{{ authors|pluralize }}:
-    {% for author in authors %}
-    <a href="{{ author.get_absolute_url }}">{{ author }}</a>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</h3>
-{% endif %}
-{% endwith %}
-<p>
-    {% with sec=entry.section chap=entry.chapter %}
-    {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
-    {% if chap %}Chapter {{ chap }}{% endif %}
-    {% endwith %}
-</p>
-<h3>{{ entry.publish_dt }}</h3>
-<h3>By: {{ entry.author }}</h3>
-
-{% if entry.tags.exists %}
-<p>
-    tags:
-    {% for tag in entry.tags.all %}
-    <a href="{% url 'user_journal' %}?tag={{ tag.slug }}">
-        {{ tag }}
-    </a>
-    {% if not forloop.last %} | {% endif %}
-    {% endfor %}
-</p>
-{% endif %}
-
-<p>{{ entry.body|markdown|linebreaks }}</p>
+{% include 'render/entry_primary.html' with entry=entry %}
 {% endblock content %}

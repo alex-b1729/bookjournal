@@ -6,18 +6,9 @@
 {% endblock title %}
 
 {% block content %}
-<h2>{{ book.title }}</h2>
-{% if book.authors %}
-<p>
-    By
-    {% for author in book.authors.all %}
-    <a href="{{ author.get_absolute_url }}">
-        {{ author }}
-    </a>{% if not forloop.last %}, {% endif %}
-    {% endfor %}
-</p>
-{% endif %}
-<p>Published: {{ book.published }}</p>
+
+{% include 'render/book_primary.html' with book=book %}
+
 <p>
     <a href="{% url 'user_entry_create' book.pk %}">New Entry</a>
 </p>
