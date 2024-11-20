@@ -151,7 +151,7 @@ a.btn-clear:hover, a.btn-clear:active {
     margin-block-end: 0.5em;
 }
 
-.entry-body code {
+code {
     display: inline-flex;
     background-color: black;
     color: white;

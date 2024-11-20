@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Following | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<div class="page-title">
+    <h2>Followed users</h2>
+</div>
+<ul>
+    {% for follow in following %}
+    <li><a href="{% url 'user_detail' follow.pk %}">{{ follow }}</a></li>
+    {% empty %}
+    <li>No followers</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

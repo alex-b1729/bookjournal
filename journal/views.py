@@ -1,12 +1,13 @@
+from django.db.models import Q
 from django.views import generic
 from django.contrib import messages
 from django.core.validators import slug_re
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect, Http404
 from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
@@ -428,5 +429,62 @@ class AuthorDetailView(generic.ListView):
         context.update({
             'section': 'authors',
             'author': self.author,
+        })
+        return context
+
+
+class FollowingList(
+    LoginRequiredMixin,
+    generic.ListView,
+):
+    context_object_name = 'following'
+    paginate_by = 50
+    template_name = 'following/list.html'
+
+    def get_queryset(self):
+        return self.request.user.following.all()
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'feed',
+        })
+        return context
+
+
+class UserDetail(
+    LoginRequiredMixin,
+    generic.DetailView,
+):
+    model = get_user_model()
+    # context_object_name = 'user'
+    template_name = 'user/detail.html'
+    follower = None
+
+    def get_object(self, **kwargs):
+        obj = super().get_object(**kwargs)
+        profile_visibility = obj.profile.journal_visibility
+        public_user = profile_visibility == models.journal.Visibility.PUBLIC
+        followed_user = (
+                profile_visibility in (models.journal.Visibility.PUBLIC, models.journal.Visibility.FOLLOWERS)
+                and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
+        )
+        if followed_user:
+            self.follower = models.journal.Follower.objects.get(
+                user_from=self.request.user,
+                user_to=obj,
+            )
+        if not (public_user or followed_user):
+            raise Http404(
+                'User is not public or not followed by user %(request_user)s'
+                % {'request_user': self.request.user.username}
+            )
+        return obj
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'feed',
+            'follower': self.follower,
         })
         return context

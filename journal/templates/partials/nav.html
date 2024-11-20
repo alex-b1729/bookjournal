@@ -11,6 +11,12 @@
             {% if section == 'journal' %}>{% endif %}
             Journal
         </a>
+        <a
+                class="{% if section == 'feed' %}current{% endif %}"
+                href="#">
+            {% if section == 'feed' %}>{% endif %}
+            Feed
+        </a>
         {% endif %}
         <a
                 class="{% if section == 'books' %}current{% endif %}"

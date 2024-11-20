@@ -55,6 +55,18 @@ urlpatterns = [
             path('<int:author_pk>/', journal_views.AuthorDetailView.as_view(), name='author_detail'),
         ])
     ),
+    path(
+        'feed/',
+        include([
+            path(
+                'following/',
+                include([
+                    path('', journal_views.FollowingList.as_view(), name='following_list'),
+                ])
+            ),
+        ])
+    ),
+    path('user/<int:pk>/', journal_views.UserDetail.as_view(), name='user_detail'),
     path('', journal_views.index, name='index'),
     path('', include('journal.urls')),
     path(

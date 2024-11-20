@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load entry_tags %}
+
+{% block title %}
+User {{ object.username }} | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<p>
+    <strong>Username:</strong> {{ object.username }}
+    <br/>
+    <strong>Date joined:</strong> {{ object.date_joined.date }}
+</p>
+<p>
+    {% if follower %}
+    <strong>Following since:</strong> {{ follower.created.date }}
+    {% else %}
+    <a href="#">Send a request to follow</a>
+    {% endif %}
+</p>
+{% with about=object.profile.about %}
+{% if about %}
+<p>
+    {{ about|markdown|linebreaks }}
+</p>
+{% endif %}
+{% endwith %}
+{% endblock content %}
