@@ -464,18 +464,18 @@ class UserDetail(
     def get_object(self, **kwargs):
         obj = super().get_object(**kwargs)
         profile_visibility = obj.profile.journal_visibility
-        print(profile_visibility)
         public_user = profile_visibility == models.journal.Visibility.PUBLIC
         followed_user = (
                 profile_visibility >= models.journal.Visibility.FOLLOWERS
                 and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
         )
+        self_user = obj == self.request.user
         if followed_user:
-            self.follower = models.journal.Follower.objects.get(
+            self.follower = models.Follower.objects.get(
                 user_from=self.request.user,
                 user_to=obj,
             )
-        if not (public_user or followed_user):
+        if not (public_user or followed_user or self_user):
             raise Http404(
                 'User is not public or not followed by user %(request_user)s'
                 % {'request_user': self.request.user.username}
@@ -487,5 +487,38 @@ class UserDetail(
         context.update({
             'section': 'feed',
             'follower': self.follower,
+        })
+        return context
+
+
+class FeedList(
+    LoginRequiredMixin,
+    generic.ListView,
+):
+    context_object_name = 'entries'
+    template_name = 'feed/list.html'
+    paginate_by = 50
+
+    def get_queryset(self):
+        published_q = Q(status=models.Entry.Status.PUBLISHED)
+        public_q = (
+            Q(author__profile__journal_visibility=models.journal.Visibility.PUBLIC)
+            & Q(visibility=models.journal.Visibility.PUBLIC)
+        )
+        follower_q = (
+            Q(author__profile__journal_visibility__gte=models.journal.Visibility.FOLLOWERS)
+            & Q(visibility__gte=models.journal.Visibility.FOLLOWERS)
+            & Q(author__in=self.request.user.following.all())
+        )
+        self_q = Q(author=self.request.user)
+        qs = models.Entry.objects.filter(
+            self_q | (published_q & (public_q | follower_q))
+        )
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'feed',
         })
         return context

@@ -58,6 +58,7 @@ urlpatterns = [
     path(
         'feed/',
         include([
+            path('', journal_views.FeedList.as_view(), name='feed_list'),
             path(
                 'following/',
                 include([

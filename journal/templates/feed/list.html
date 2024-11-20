@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load entry_tags %}
+
+{% block title %}
+Feed | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<div class="page-title">
+    <h2>Feed</h2>
+</div>
+
+{% for entry in entries %}
+{% ifchanged entry.book %}
+{% if not forloop.first %}</div>{% endif %}
+<div class="list-header">
+    {% include 'render/book_list_header.html' with book=entry.book %}
+</div>
+<div class="indent-1">
+{% endifchanged %}
+    <div class="entry-list-item">
+        {% include 'render/entry_feed_list_item.html' with entry=entry %}
+    </div>
+{% if forloop.last %}</div>{% endif %}
+
+{% empty %}
+<p>No entries at all??</p>
+{% endfor %}
+
+{% if entries %}
+{% include 'partials/pagination.html' with page=page_obj %}
+{% endif %}
+
+{% endblock content %}

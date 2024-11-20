@@ -1,0 +1,48 @@
+{% load entry_tags %}
+
+<div class="entry-header">
+    <span class="entry-dt">
+        <a href="#">{{ entry.publish_dt }}</a>
+    </span>
+    -
+    <span class="entry-author">
+        <a href="{% url 'user_detail' entry.author.pk %}">{{ entry.author.username }}</a>
+    </span>
+    - <span class="entry-visibility">{{ entry.get_visibility_display }}</span>
+</div>
+
+<div class="entry-body">
+    {% with sec=entry.section chap=entry.chapter %}
+    {% if sec or chap %}
+    <div class="entry-book">
+        {% if sec %}{{ sec }}{% endif %}{% if sec and chap %}, {% endif %}
+        {% if chap %}Chapter {{ chap }}{% endif %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    {% with tags=entry.tags %}
+    {% if tags %}
+    <div class="tag-container">
+        {% include 'render/tag_partial.html' with tags=tags %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="entry-content">
+        {% if entry.title %}
+        <h1 class="entry-title">
+            {{ entry.title }}
+        </h1>
+        {% endif %}
+
+        <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
+    </div>
+
+    {% if entry.author == request.user %}
+    <p>
+        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit Entry</a>
+        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+    </p>
+    {% endif %}
+</div>

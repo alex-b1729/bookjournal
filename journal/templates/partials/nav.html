@@ -13,7 +13,7 @@
         </a>
         <a
                 class="{% if section == 'feed' %}current{% endif %}"
-                href="#">
+                href="{% url 'feed_list' %}">
             {% if section == 'feed' %}>{% endif %}
             Feed
         </a>

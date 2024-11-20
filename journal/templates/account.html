@@ -77,4 +77,10 @@ Account | {{ block.super }}
     <input type="submit" value="Save">
 </form>
 
+{% if request.user.profile.journal_visibility >= 1 %}
+<p>
+    View <a href="{% url 'user_detail' request.user.pk %}">your profile</a> as others see it.
+</p>
+{% endif %}
+
 {% endblock content %}
