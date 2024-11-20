@@ -198,7 +198,7 @@ class FollowRequest(models.Model):
     def accept(self):
         self.status = RequestStatus.ACCEPTED
         self.save()
-        self.user_from.followers.add(self.user_to)
+        self.user_from.following.add(self.user_to)
 
     def decline(self):
         self.status = RequestStatus.DECLINED

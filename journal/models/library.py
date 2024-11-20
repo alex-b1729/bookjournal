@@ -52,6 +52,7 @@ class Book(models.Model):
     )
     published = models.SmallIntegerField(
         blank=True,
+        null=True,
     )
     description = models.TextField(
         blank=True,
