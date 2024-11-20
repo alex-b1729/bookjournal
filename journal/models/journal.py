@@ -10,10 +10,10 @@ from taggit.managers import TaggableManager
 from . import library
 
 
-class Visibility(models.TextChoices):
-    PRIVATE = 'x', _('Private')
-    FOLLOWERS = 'f', _('Followers')
-    PUBLIC = 'p', _('Public')
+class Visibility(models.IntegerChoices):
+    PRIVATE = 0, _('Private')
+    FOLLOWERS = 1, _('Followers')
+    PUBLIC = 2, _('Public')
 
 
 class Entry(models.Model):
@@ -52,8 +52,7 @@ class Entry(models.Model):
         max_length=200,
         blank=True,
     )
-    visibility = models.CharField(
-        max_length=1,
+    visibility = models.IntegerField(
         choices=Visibility,
         default=Visibility.PRIVATE,
     )
@@ -87,14 +86,12 @@ class Profile(models.Model):
         primary_key=True,
         editable=False,
     )
-    journal_visibility = models.CharField(
-        max_length=1,
+    journal_visibility = models.IntegerField(
         choices=Visibility,
         default=Visibility.FOLLOWERS,
         verbose_name='journal visibility',
     )
-    default_visibility = models.CharField(
-        max_length=1,
+    default_visibility = models.IntegerField(
         choices=Visibility,
         default=Visibility.PRIVATE,
         verbose_name='default entry visibility',

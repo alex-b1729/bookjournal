@@ -464,9 +464,10 @@ class UserDetail(
     def get_object(self, **kwargs):
         obj = super().get_object(**kwargs)
         profile_visibility = obj.profile.journal_visibility
+        print(profile_visibility)
         public_user = profile_visibility == models.journal.Visibility.PUBLIC
         followed_user = (
-                profile_visibility in (models.journal.Visibility.PUBLIC, models.journal.Visibility.FOLLOWERS)
+                profile_visibility >= models.journal.Visibility.FOLLOWERS
                 and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
         )
         if followed_user:
