@@ -43,6 +43,7 @@ nav a.current {
 .page-title {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 
 .tag-container {
@@ -65,15 +66,19 @@ a.tag:hover, a.tag:active {
     background-color: #b4b4b4;
 }
 
-a.btn:link, a.btn:visited {
-    background-color: #f0f0f0;
-    color: black;
+a.btn {
+    height: fit-content;
     padding: 1px 4px;
     margin-right: 3px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
     border-style: solid;
+}
+
+a.btn:link, a.btn:visited {
+    background-color: #f0f0f0;
+    color: black;
     border-color: LightGray;
 }
 
@@ -88,6 +93,20 @@ a.btn-clear:link, a.btn-clear:visited {
 
 a.btn-clear:hover, a.btn-clear:active {
     background-color: DarkGray;
+}
+
+a.btn-success:link, a.btn-success:visited {
+    color: green;
+    border-color: green;
+}
+
+a.btn-success:hover, a.btn-success:active {
+    background-color: DarkGray;
+}
+
+a.btn-nopoint:link, a.btn-nopoint:visited, a.btn-nopoint:hover, a.btn-nopoint:active {
+    cursor: default;
+    background-color: #f0f0f0;
 }
 
 .indent-1 {
