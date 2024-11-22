@@ -448,7 +448,7 @@ class FollowingList(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'section': 'feed',
+            'section': 'following',
         })
         return context
 
@@ -494,7 +494,7 @@ class UserDetail(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'section': 'feed',
+            'section': 'following' if self.follower else None,
             'requested_or_declined': self.requested_or_declined,
             'follower': self.follower,
         })

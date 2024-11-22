@@ -59,19 +59,19 @@ urlpatterns = [
         'feed/',
         include([
             path('', journal_views.FeedList.as_view(), name='feed_list'),
-            path(
-                'following/',
-                include([
-                    path('', journal_views.FollowingList.as_view(), name='following_list'),
-                ])
-            ),
         ])
     ),
     path(
-        'user/<int:pk>/',
+        'user/',
         include([
-            path('', journal_views.UserDetail.as_view(), name='user_detail'),
-            path('follow/', journal_views.RequestFollowView.as_view(), name='request_follow'),
+            path('following/', journal_views.FollowingList.as_view(), name='following_list'),
+            path(
+                '<int:pk>/',
+                include([
+                    path('', journal_views.UserDetail.as_view(), name='user_detail'),
+                    path('follow/', journal_views.RequestFollowView.as_view(), name='request_follow'),
+                ])
+            ),
         ])
     ),
     path('', journal_views.index, name='index'),

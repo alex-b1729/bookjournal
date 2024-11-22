@@ -17,6 +17,12 @@
             {% if section == 'feed' %}>{% endif %}
             Feed
         </a>
+        <a
+                class="{% if section == 'following' %}current{% endif %}"
+                href="{% url 'following_list' %}">
+            {% if section == 'following' %}>{% endif %}
+            Following
+        </a>
         {% endif %}
         <a
                 class="{% if section == 'books' %}current{% endif %}"
