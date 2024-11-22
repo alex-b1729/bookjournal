@@ -13,16 +13,34 @@ User {{ object.username }} | {{ block.super }}
         <strong>Date joined:</strong> {{ object.date_joined.date }}
     </p>
 
-    {% if object != request.user and not follower and not requested_or_declined %}
+    {% if object != request.user %}
+    {% if follower %}
+    <p>
+        <a href="#" class="btn btn-success btn-nopoint">&#x2713; Following</a>
+        <br>
+        <strong>Since:</strong> {{ follower.created.date }}
+    </p>
+    {% elif request_from %}
+    {% if request_from.status == 'o' %}
+    <div>
+        Follow requested<br>
+        <form method="post" action="{% url 'follow_accept' request_from.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'user_detail' object.pk %}">
+            <button type="submit" value="Accept">Accept</button>
+        </form>
+        <form method="post" action="{% url 'follow_decline' request_from.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'user_detail' object.pk %}">
+            <button type="submit" value="Decline">Decline</button>
+        </form>
+    </div>
+    {% endif %}
+    {% elif not request_to %}
     <a href="{% url 'request_follow' object.pk %}" class="btn">+ Follow</a>
     {% endif %}
+    {% endif %}
 </div>
-
-{% if follower %}
-<div>
-    <p><strong>Following since:</strong> {{ follower.created.date }}</p>
-</div>
-{% endif %}
 
 {% with about=object.profile.about %}
 {% if about %}

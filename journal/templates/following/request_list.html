@@ -22,10 +22,12 @@ Follow requests | {{ block.super }}
         </p>
         <form method="post" action="{% url 'follow_accept' f.pk %}">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'follow_requests' %}">
             <button type="submit" value="Accept">Accept</button>
         </form>
         <form method="post" action="{% url 'follow_decline' f.pk %}">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'follow_requests' %}">
             <button type="submit" value="Decline">Decline</button>
         </form>
     </li>

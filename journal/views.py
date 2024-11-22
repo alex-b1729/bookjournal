@@ -461,7 +461,8 @@ class UserDetail(
     model = get_user_model()
     # context_object_name = 'user'
     template_name = 'user/detail.html'
-    requested_or_declined = None
+    request_from = None
+    request_to = None
     follower = None
 
     def get_object(self, **kwargs):
@@ -472,23 +473,33 @@ class UserDetail(
             profile_visibility >= models.journal.Visibility.FOLLOWERS
             and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
         )
-        self.requested_or_declined = (
-            models.FollowRequest.objects.filter(
-                (Q(user_from=self.request.user) & Q(user_to=obj)) &
-                (Q(status=models.journal.RequestStatus.OUTSTANDING)
-                 | Q(status=models.journal.RequestStatus.DECLINED))
-            ).exists()
-        )
         self_user = obj == self.request.user
+
+        self.request_from = False
+        self.request_to = False
         if followed_user:
             self.follower = models.Follower.objects.get(
                 user_from=self.request.user,
                 user_to=obj,
             )
+        else:
+            # implicitly assumes there can only be one follow request from/to
+            self.request_from = models.FollowRequest.objects.filter(
+                user_from=obj,
+                user_to=self.request.user,
+            ).first()
+            self.request_to = models.FollowRequest.objects.filter(
+                user_from=self.request.user,
+                user_to=obj,
+            ).first()
+
         if not (public_user or followed_user or self_user):
             raise Http404(
-                'User is not public or not followed by user %(request_user)s'
-                % {'request_user': self.request.user.username}
+                'User %(user)s is not public or not followed by request.user %(request_user)s'
+                % {
+                    'user': obj,
+                    'request_user': self.request.user.username
+                }
             )
         return obj
 
@@ -496,7 +507,8 @@ class UserDetail(
         context = super().get_context_data(**kwargs)
         context.update({
             'section': 'following' if self.follower else None,
-            'requested_or_declined': self.requested_or_declined,
+            'request_from': self.request_from,
+            'request_to': self.request_to,
             'follower': self.follower,
         })
         return context
@@ -573,7 +585,10 @@ def follow_accept(request, request_pk):
         user_to=request.user,
     )
     r.accept()
-    return redirect('follow_requests')
+    next = 'follow_requests'
+    if 'next' in request.POST:
+        next = request.POST.get('next')
+    return redirect(next)
 
 
 @login_required
@@ -585,7 +600,10 @@ def follow_decline(request, request_pk):
         user_to=request.user,
     )
     r.decline()
-    return redirect('follow_requests')
+    next = 'follow_requests'
+    if 'next' in request.POST:
+        next = request.POST.get('next')
+    return redirect(next)
 
 
 class FeedList(
