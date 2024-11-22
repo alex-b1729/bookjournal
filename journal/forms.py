@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth import password_validation
 
 from .models import Profile
+from .models.journal import Visibility
 
 
 class UserRegistrationForm(forms.ModelForm):
@@ -49,3 +50,11 @@ class UserRegistrationForm(forms.ModelForm):
 
 class SearchForm(forms.Form):
     query = forms.CharField()
+
+
+class FeedViewSelectForm(forms.Form):
+    view_select = forms.ChoiceField(
+        choices=Visibility,
+        widget=forms.CheckboxSelectMultiple,
+        initial=[c for c in Visibility],
+    )

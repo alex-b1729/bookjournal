@@ -8,6 +8,13 @@ Feed | {{ block.super }}
 {% block content %}
 <div class="page-title">
     <h2>Feed</h2>
+    {% comment %}
+    <form method="post">
+        {% csrf_token %}
+        {{ view_form.as_div }}
+        <input type="submit" value="Apply">
+    </form>
+    {% endcomment %}
 </div>
 
 {% for entry in entries %}

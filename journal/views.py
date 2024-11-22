@@ -498,6 +498,11 @@ class FeedList(
     context_object_name = 'entries'
     template_name = 'feed/list.html'
     paginate_by = 50
+    view_form = None
+
+    def dispatch(self, request, *args, **kwargs):
+        # self.view_form = forms.FeedViewSelectForm()
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         published_q = Q(status=models.Entry.Status.PUBLISHED)
@@ -512,7 +517,7 @@ class FeedList(
         )
         self_q = Q(author=self.request.user)
         qs = models.Entry.objects.filter(
-            self_q | (published_q & (public_q | follower_q))
+            published_q & (self_q | public_q | follower_q)
         )
         return qs
 
@@ -520,5 +525,6 @@ class FeedList(
         context = super().get_context_data(**kwargs)
         context.update({
             'section': 'feed',
+            # 'view_form': self.view_form,
         })
         return context
