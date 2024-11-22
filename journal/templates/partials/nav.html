@@ -22,6 +22,9 @@
                 href="{% url 'following_list' %}">
             {% if section == 'following' %}>{% endif %}
             Following
+            {% if follow_request_count != 0 %}
+            ({{ follow_request_count }})
+            {% endif %}
         </a>
         {% endif %}
         <a

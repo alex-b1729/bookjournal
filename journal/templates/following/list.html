@@ -8,6 +8,15 @@ Following | {{ block.super }}
 <div class="page-title">
     <h2>Followed users</h2>
 </div>
+
+<div>
+    {% if follow_request_count != 0 %}
+    <p>You have <a href="#">{{ follow_request_count }} follow requests</a>.</p>
+    {% else %}
+    <p>View <a href="#">follow requests</a></p>
+    {% endif %}
+</div>
+
 <ul>
     {% for follow in following %}
     <li><a href="{% url 'user_detail' follow.pk %}">{{ follow }}</a></li>

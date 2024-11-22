@@ -511,12 +511,6 @@ class RequestFollowView(
     user_from = None
     user_to = None
 
-    # def get_form_class(self):
-    #     return modelform_factory(
-    #         model=models.FollowRequest,
-    #         fields=('message',)
-    #     )
-
     def dispatch(self, request, *args, **kwargs):
         self.user_from = request.user
         self.user_to = get_object_or_404(
