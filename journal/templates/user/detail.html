@@ -20,7 +20,7 @@ User {{ object.username }} | {{ block.super }}
 
 {% if follower %}
 <div>
-    <p><strong>Following since:</strong> {{ follower.created }}</p>
+    <p><strong>Following since:</strong> {{ follower.created.date }}</p>
 </div>
 {% endif %}
 

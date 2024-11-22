@@ -64,7 +64,20 @@ urlpatterns = [
     path(
         'user/',
         include([
-            path('following/', journal_views.FollowingList.as_view(), name='following_list'),
+            path(
+                'following/',
+                include([
+                    path('', journal_views.FollowingList.as_view(), name='following_list'),
+                    path(
+                        'requests/',
+                        include([
+                            path('', journal_views.FollowRequestsView.as_view(), name='follow_requests'),
+                            path('<int:request_pk>/accept/', journal_views.follow_accept, name='follow_accept'),
+                            path('<int:request_pk>/decline/', journal_views.follow_decline, name='follow_decline'),
+                        ])
+                    ),
+                ])
+            ),
             path(
                 '<int:pk>/',
                 include([

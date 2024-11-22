@@ -11,9 +11,12 @@ Following | {{ block.super }}
 
 <div>
     {% if follow_request_count != 0 %}
-    <p>You have <a href="#">{{ follow_request_count }} follow requests</a>.</p>
+    <p>You have
+        <a href="{% url 'follow_requests' %}">
+            {{ follow_request_count }} follow request{{ follow_request_count|pluralize }}</a>.
+    </p>
     {% else %}
-    <p>View <a href="#">follow requests</a></p>
+    <p>View <a href="{% url 'follow_requests' %}">follow requests</a></p>
     {% endif %}
 </div>
 

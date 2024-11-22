@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Follow requests | {{ block.super }}
+{% endblock title %}
+
+{% block content %}
+<h1>Follow requests</h1>
+{% if follow_requests %}
+{% if follow_requests.outstanding %}
+<h3>Outstanding</h3>
+<ul>
+    {% for f in follow_requests.outstanding %}
+    <li>
+        <p>
+            <a href="{% url 'user_detail' f.user_from.pk %}">{{ f.user_from.username }}</a>
+            <br>
+            {% if f.message %}
+            {{ f.message }}
+            <br>
+            {% endif %}
+        </p>
+        <form method="post" action="{% url 'follow_accept' f.pk %}">
+            {% csrf_token %}
+            <button type="submit" value="Accept">Accept</button>
+        </form>
+        <form method="post" action="{% url 'follow_decline' f.pk %}">
+            {% csrf_token %}
+            <button type="submit" value="Decline">Decline</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if follow_requests.accepted %}
+<h3>Accepted</h3>
+<ul>
+    {% for f in follow_requests.accepted %}
+    <li>
+        <a href="{% url 'user_detail' f.user_from.pk %}">{{ f.user_from.username }}</a>
+        Following since: {{ f.updated.date }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% if follow_requests.declined %}
+<h3>Declined</h3>
+<ul>
+    {% for f in follow_requests.declined %}
+    <li>
+        <a href="{% url 'user_detail' f.user_from.pk %}">{{ f.user_from.username }}</a>
+        Declined on: {{ f.updated.date }}
+        <form method="post" action="{% url 'follow_accept' f.pk %}">
+            {% csrf_token %}
+            <button type="submit" value="Accept">Accept</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endif %}
+{% endblock content %}

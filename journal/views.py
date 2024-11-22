@@ -6,6 +6,7 @@ from django.core.validators import slug_re
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect, Http404
+from django.views.decorators.http import require_POST
 from django.contrib.postgres.search import SearchVector
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -538,6 +539,53 @@ class RequestFollowView(
 
     def get_success_url(self):
         return reverse_lazy('user_detail', args=[self.user_to.pk])
+
+
+class FollowRequestsView(
+    LoginRequiredMixin,
+    generic.TemplateView,
+):
+    template_name = 'following/request_list.html'
+    follow_requests = None
+
+    def get(self, request, *args, **kwargs):
+        self.follow_requests = dict()
+        self.follow_requests['outstanding'] = models.FollowRequest.outstanding.filter(user_to=request.user)
+        self.follow_requests['accepted'] = models.FollowRequest.accepted.filter(user_to=request.user)
+        self.follow_requests['declined'] = models.FollowRequest.declined.filter(user_to=request.user)
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'following',
+            'follow_requests': self.follow_requests,
+        })
+        return context
+
+
+@login_required
+@require_POST
+def follow_accept(request, request_pk):
+    r = get_object_or_404(
+        models.FollowRequest,
+        pk=request_pk,
+        user_to=request.user,
+    )
+    r.accept()
+    return redirect('follow_requests')
+
+
+@login_required
+@require_POST
+def follow_decline(request, request_pk):
+    r = get_object_or_404(
+        models.FollowRequest,
+        pk=request_pk,
+        user_to=request.user,
+    )
+    r.decline()
+    return redirect('follow_requests')
 
 
 class FeedList(
