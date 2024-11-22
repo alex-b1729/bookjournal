@@ -67,7 +67,13 @@ urlpatterns = [
             ),
         ])
     ),
-    path('user/<int:pk>/', journal_views.UserDetail.as_view(), name='user_detail'),
+    path(
+        'user/<int:pk>/',
+        include([
+            path('', journal_views.UserDetail.as_view(), name='user_detail'),
+            path('follow/', journal_views.RequestFollowView.as_view(), name='request_follow'),
+        ])
+    ),
     path('', journal_views.index, name='index'),
     path('', include('journal.urls')),
     path(

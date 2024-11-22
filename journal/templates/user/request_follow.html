@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Request to follow {{ user_to.username }} | {{ block.super }}
+{% endblock %}
+
+{% block content %}
+Request to follow {{ user_to.username }}
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Send Request">
+</form>
+{% endblock content %}

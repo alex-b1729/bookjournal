@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.views import generic
 from django.contrib import messages
+from django.forms import modelform_factory
 from django.core.validators import slug_re
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth import get_user_model
@@ -459,6 +460,7 @@ class UserDetail(
     model = get_user_model()
     # context_object_name = 'user'
     template_name = 'user/detail.html'
+    requested_or_declined = None
     follower = None
 
     def get_object(self, **kwargs):
@@ -466,8 +468,15 @@ class UserDetail(
         profile_visibility = obj.profile.journal_visibility
         public_user = profile_visibility == models.journal.Visibility.PUBLIC
         followed_user = (
-                profile_visibility >= models.journal.Visibility.FOLLOWERS
-                and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
+            profile_visibility >= models.journal.Visibility.FOLLOWERS
+            and self.request.user.following.all().filter(pk__contains=obj.pk).exists()
+        )
+        self.requested_or_declined = (
+            models.FollowRequest.objects.filter(
+                (Q(user_from=self.request.user) & Q(user_to=obj)) &
+                (Q(status=models.journal.RequestStatus.OUTSTANDING)
+                 | Q(status=models.journal.RequestStatus.DECLINED))
+            ).exists()
         )
         self_user = obj == self.request.user
         if followed_user:
@@ -486,9 +495,55 @@ class UserDetail(
         context = super().get_context_data(**kwargs)
         context.update({
             'section': 'feed',
+            'requested_or_declined': self.requested_or_declined,
             'follower': self.follower,
         })
         return context
+
+
+class RequestFollowView(
+    LoginRequiredMixin,
+    generic.CreateView,
+):
+    model = models.FollowRequest
+    fields = ('message',)
+    template_name = 'user/request_follow.html'
+    user_from = None
+    user_to = None
+
+    # def get_form_class(self):
+    #     return modelform_factory(
+    #         model=models.FollowRequest,
+    #         fields=('message',)
+    #     )
+
+    def dispatch(self, request, *args, **kwargs):
+        self.user_from = request.user
+        self.user_to = get_object_or_404(
+            get_user_model(),
+            pk=kwargs.get('pk'),
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        form.instance.user_from = self.user_from
+        form.instance.user_to = self.user_to
+        messages.success(
+            request=self.request,
+            message=f'Your request to follow {self.user_to.username} is sent'
+        )
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'feed',
+            'user_to': self.user_to,
+        })
+        return context
+
+    def get_success_url(self):
+        return reverse_lazy('user_detail', args=[self.user_to.pk])
 
 
 class FeedList(

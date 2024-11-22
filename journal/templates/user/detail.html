@@ -13,16 +13,16 @@ User {{ object.username }} | {{ block.super }}
         <strong>Date joined:</strong> {{ object.date_joined.date }}
     </p>
 
-    {% if object != request.user %}
-    {% if follower %}
-    <a href="#" class="btn btn-success btn-nopoint">&#x2713; Following</a>
-    {% else %}
-    <a href="#" class="btn">
-        + Follow
-    </a>
-    {% endif %}
+    {% if object != request.user and not follower and not requested_or_declined %}
+    <a href="{% url 'request_follow' object.pk %}" class="btn">+ Follow</a>
     {% endif %}
 </div>
+
+{% if follower %}
+<div>
+    <p><strong>Following since:</strong> {{ follower.created }}</p>
+</div>
+{% endif %}
 
 {% with about=object.profile.about %}
 {% if about %}

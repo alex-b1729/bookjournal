@@ -6,4 +6,5 @@ from .journal import (
     Entry,
     Profile,
     Follower,
+    FollowRequest,
 )
