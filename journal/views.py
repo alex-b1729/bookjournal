@@ -444,7 +444,9 @@ class FollowingList(
     template_name = 'following/list.html'
 
     def get_queryset(self):
-        return self.request.user.following.all()
+        return self.request.user.following.all().filter(
+            profile__journal_visibility__gte=models.journal.Visibility.FOLLOWERS,
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
