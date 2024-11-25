@@ -12,12 +12,6 @@
             Journal
         </a>
         <a
-                class="{% if section == 'feed' %}current{% endif %}"
-                href="{% url 'feed_list' %}">
-            {% if section == 'feed' %}>{% endif %}
-            Feed
-        </a>
-        <a
                 class="{% if section == 'following' %}current{% endif %}"
                 href="{% url 'following_list' %}">
             {% if section == 'following' %}>{% endif %}
@@ -27,6 +21,12 @@
             {% endif %}
         </a>
         {% endif %}
+        <a
+                class="{% if section == 'feed' %}current{% endif %}"
+                href="{% url 'feed_list' %}">
+            {% if section == 'feed' %}>{% endif %}
+            Feed
+        </a>
         <a
                 class="{% if section == 'books' %}current{% endif %}"
                 href="{% url 'book_list' %}">
