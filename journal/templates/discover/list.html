@@ -2,12 +2,12 @@
 {% load entry_tags %}
 
 {% block title %}
-Feed | {{ block.super }}
+Discover | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
 <div class="page-title">
-    <h2>Feed</h2>
+    <h2>Discover</h2>
     {% comment %}
     <form method="post">
         {% csrf_token %}
@@ -26,7 +26,7 @@ Feed | {{ block.super }}
 <div class="indent-1">
 {% endifchanged %}
     <div class="entry-list-item">
-        {% include 'render/entry_feed_list_item.html' with entry=entry %}
+        {% include 'render/entry_discover_list_item.html' with entry=entry %}
     </div>
 {% if forloop.last %}</div>{% endif %}
 

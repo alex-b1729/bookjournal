@@ -56,9 +56,9 @@ urlpatterns = [
         ])
     ),
     path(
-        'feed/',
+        'discover/',
         include([
-            path('', journal_views.FeedList.as_view(), name='feed_list'),
+            path('', journal_views.Discover.as_view(), name='discover'),
         ])
     ),
     path(

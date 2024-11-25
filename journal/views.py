@@ -45,19 +45,6 @@ def register(request):
     )
 
 
-def feed(request):
-    if request.user.is_authenticated:
-        return redirect(reverse_lazy('entry_list', args=[request.user.username]))
-    else:
-        return render(
-            request,
-            'entry/feed.html',
-            {
-                'section': 'journal',
-            }
-        )
-
-
 class AccountView(
     LoginRequiredMixin,
     generic.UpdateView,
@@ -550,7 +537,7 @@ class RequestFollowView(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'section': 'feed',
+            # 'section': 'discover',
             'user_to': self.user_to,
         })
         return context
@@ -612,17 +599,17 @@ def follow_decline(request, request_pk):
     return redirect(next)
 
 
-class FeedList(
+class Discover(
     # LoginRequiredMixin,
     generic.ListView,
 ):
     context_object_name = 'entries'
-    template_name = 'feed/list.html'
+    template_name = 'discover/list.html'
     paginate_by = 50
     view_form = None
 
     def dispatch(self, request, *args, **kwargs):
-        # self.view_form = forms.FeedViewSelectForm()
+        # self.view_form = forms.DiscoverViewSelectForm()
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -648,7 +635,7 @@ class FeedList(
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
-            'section': 'feed',
+            'section': 'discover',
             # 'view_form': self.view_form,
         })
         return context

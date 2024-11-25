@@ -52,7 +52,7 @@ class SearchForm(forms.Form):
     query = forms.CharField()
 
 
-class FeedViewSelectForm(forms.Form):
+class DiscoverViewSelectForm(forms.Form):
     view_select = forms.ChoiceField(
         choices=Visibility,
         widget=forms.CheckboxSelectMultiple,
