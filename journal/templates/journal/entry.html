@@ -6,17 +6,23 @@ Entry | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
-<p><a href="{% url 'user_journal' %}">< Journal</a></p>
+<p><a href="{% url 'journal' entry.author.pk %}">
+    {% if request.user == entry.author %}
+    < Journal
+    {% else %}
+    < {{ entry.author }}'s Journal
+    {% endif %}
+</a></p>
 
 <div class="book-title">
     <h1>
-        <a href="{% url 'user_book_entry_list' entry.book.pk %}">
+        <a href="{% url 'journal_book' entry.author.pk entry.book.pk %}">
             {{ entry.book.title }}
         </a>
         {% if entry.book.published %}- {{ entry.book.published }}{% endif %}
     </h1>
     <p>
-        <a href="{% url 'user_entry_create' entry.book.pk %}" class="btn">
+        <a href="{% url 'entry_create' request.user.pk entry.book.pk %}" class="btn">
             + New Entry
         </a>
     </p>

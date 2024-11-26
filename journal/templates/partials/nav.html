@@ -7,7 +7,7 @@
         {% if request.user.is_authenticated %}
         <a
                 class="{% if section == 'journal' %}current{% endif %}"
-                href="{% url 'user_journal' %}">
+                href="{% url 'journal' request.user.pk %}">
             {% if section == 'journal' %}>{% endif %}
             Journal
         </a>

@@ -6,7 +6,7 @@
     </span>
     -
     <span class="entry-author">
-        <a href="{% url 'user_detail' entry.author.pk %}">{{ entry.author.username }}</a>
+        <a href="{% url 'journal' entry.author.pk %}">{{ entry.author.username }}</a>
     </span>
     - <span class="entry-visibility">{{ entry.get_visibility_display }}</span>
 </div>
@@ -41,8 +41,8 @@
 
     {% if entry.author == request.user %}
     <p>
-        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit Entry</a>
-        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+        <a href="{% url 'entry_update' request.user.pk entry.pk %}" class="btn">Edit Entry</a>
+        <a href="{% url 'entry_delete' request.user.pk entry.pk %}" class="btn btn-clear">Delete</a>
     </p>
     {% endif %}
 </div>

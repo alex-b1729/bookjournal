@@ -7,15 +7,7 @@
 
 {% block content %}
 <p>
-    {% if request.user == profile.user %}
-    <a href="{% url 'journal' request.user.pk %}">< Journal</a>
-    {% else %}
-    <a href="{% url 'journal' profile.user.pk %}">< {{ profile.user.username }}'s Journal</a>
-    {% endif %}
-</p>
-
-<p>
-    {{ profile.user.username }}'s entries for book
+    <a href="{% url 'discover' %}">< Discover</a>
 </p>
 
 <h2>Entries for: </h2>
@@ -33,7 +25,7 @@
 {% with num=page_obj.paginator.count %}
 <h3>
     {{ num }} result{{ num|pluralize }} matching the query "{{ query_params.query }}"
-    <a href="{% url 'journal' profile.pk %}" class="btn btn-clear">
+    <a href="{% url 'discover_book' book.pk %}" class="btn btn-clear">
         Clear
     </a>
 </h3>
@@ -44,7 +36,7 @@
 {% with num=page_obj.paginator.count %}
 <h3>
     {{ num }} result{{ num|pluralize }} tagged with "{{ tag.name }}"
-    <a href="{% url 'journal' profile.pk %}" class="btn btn-clear">
+    <a href="{% url 'discover_book' book.pk %}" class="btn btn-clear">
         Clear
     </a>
 </h3>
@@ -54,7 +46,7 @@
 {% if entries %}
 <div class="indent-1">
     {% for entry in entries %}
-    <div class="entry-list-item">{% include 'render/entry_list_item.html' with entry=entry %}</div>
+    <div class="entry-list-item">{% include 'render/entry_discover_list_item.html' with entry=entry %}</div>
     {% endfor %}
 </div>
 {% else %}

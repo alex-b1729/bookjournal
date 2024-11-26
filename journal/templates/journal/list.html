@@ -2,26 +2,44 @@
 {% load entry_tags %}
 
 {% block title %}
-Journal | {{ block.super }}
+{{ profile.user.username }}'s Journal | {{ block.super }}
 {% endblock title %}
 
 {% block content %}
 <div class="page-title">
-    <h2>Journal</h2>
-
-    <form method="get">
-        <p>
-            {{ form.query }}
-            <input type="submit" value="Search"/>
-        </p>
-    </form>
+    <h2>
+        {% if request.user != profile.user %}
+        {{ profile.user.username }}'s
+        {% endif %}
+        Journal
+    </h2>
 </div>
+
+<div>
+    <p>
+        <strong>Joined:</strong> {{ profile.user.date_joined }}
+    </p>
+    {% with about=profile.about %}
+    {% if about %}
+    <p>
+        {{ about|markdown|linebreaks }}
+    </p>
+    {% endif %}
+    {% endwith %}
+</div>
+
+<form method="get">
+    <p>
+        {{ form.query }}
+        <input type="submit" value="Search"/>
+    </p>
+</form>
 
 {% if 'query' in query_params %}
 {% with num=page_obj.paginator.count %}
 <h3>
     {{ num }} result{{ num|pluralize }} matching the query "{{ query_params.query }}"
-    <a href="{% url 'user_journal' %}" class="btn btn-clear">
+    <a href="{% url 'journal' profile.pk %}" class="btn btn-clear">
         Clear
     </a>
 </h3>
@@ -32,7 +50,7 @@ Journal | {{ block.super }}
 {% with num=page_obj.paginator.count %}
 <h3>
     {{ num }} result{{ num|pluralize }} tagged with "{{ tag.name }}"
-    <a href="{% url 'user_journal' %}">
+    <a href="{% url 'journal' profile.pk %}" class="btn btn-clear">
         Clear
     </a>
 </h3>
@@ -43,7 +61,7 @@ Journal | {{ block.super }}
 {% ifchanged entry.book %}
 {% if not forloop.first %}</div>{% endif %}
 <div class="list-header">
-    {% include 'render/book_list_header.html' with book=entry.book %}
+    {% include 'render/book_list_header.html' with profile=profile book=entry.book %}
 </div>
 <div class="indent-1">
 {% endifchanged %}
@@ -56,11 +74,13 @@ Journal | {{ block.super }}
 {% if 'query' in query_params %}
 <p>No entries match your search</p>
 {% else %}
+{% if request.user == profile.user %}
 <p>
     You don't have any entries yet.
     <br/>
     Find a <a href="{% url 'book_list' %}">book</a> and start journaling.
 </p>
+{% endif %}
 {% endif %}
 {% endfor %}
 

@@ -1,7 +1,5 @@
 {% load entry_tags %}
 
-{# for request user view only at this point #}
-
 <div class="entry-header">
     <span class="entry-dt">{{ entry.publish_dt }}</span>
     - <span class="entry-author">{{ entry.author.username }}</span>
@@ -27,10 +25,10 @@
         <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
     </div>
 
-    {% block editentry %}
+    {% if request.user == entry.author %}
     <p>
-        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit</a>
-        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+        <a href="{% url 'entry_update' request.user.pk entry.pk %}" class="btn">Edit</a>
+        <a href="{% url 'entry_delete' request.user.pk entry.pk %}" class="btn btn-clear">Delete</a>
     </p>
-    {% endblock %}
+    {% endif %}
 </div>

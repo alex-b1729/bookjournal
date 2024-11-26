@@ -22,7 +22,7 @@ Following | {{ block.super }}
 
 <ul>
     {% for follow in following %}
-    <li><a href="{% url 'user_detail' follow.pk %}">{{ follow }}</a></li>
+    <li><a href="{% url 'journal' follow.pk %}">{{ follow }}</a></li>
     {% empty %}
     <li>No followers</li>
     {% endfor %}

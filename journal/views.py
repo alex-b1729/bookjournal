@@ -108,11 +108,205 @@ class UserEntryMixin(UserMixin):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['section'] = 'journal'
+        context.update({
+            'section': 'journal',
+        })
         return context
 
 
-class UserJournal(
+class OtherProfileMixin(object):
+    follower = None
+    request_from = False
+    request_to = False
+
+    def check_and_set_other_profile(self, pk):
+        self.profile = get_object_or_404(
+            models.Profile,
+            pk=pk,
+        )
+        journal_visibility = self.profile.journal_visibility
+        public_user = journal_visibility == models.journal.Visibility.PUBLIC
+        if (
+            journal_visibility == models.journal.Visibility.PRIVATE
+            or (
+                not self.request_user.is_authenticated
+                and journal_visibility != models.journal.Visibility.PUBLIC
+            )
+        ):
+            self.raise_404(self.profile.user)
+
+        followed_user = False
+        self_user = False
+        self.request_from = False
+        self.request_to = False
+        if self.request_user.is_authenticated:
+            # save to assume the journal author has at least visibility >= followers
+            followed_user = self.request_user.following.all().filter(pk__contains=self.profile.pk).exists()
+
+            if followed_user:
+                self.follower = models.Follower.objects.get(
+                    user_from=self.request_user,
+                    user_to=self.profile.user,
+                )
+            else:
+                # assumes there can only be one follow request from/to
+                self.request_from = models.FollowRequest.objects.filter(
+                    user_from=self.profile.user,
+                    user_to=self.request_user,
+                ).first()
+                self.request_to = models.FollowRequest.objects.filter(
+                    user_from=self.request_user,
+                    user_to=self.profile.user,
+                ).first()
+
+        if not (public_user or followed_user or self_user):
+            self.raise_404(self.profile.user)
+
+    def visible_to_request_user_Q(self):
+        """all entries that are visible to self.request.user"""
+        published_q = Q(status=models.Entry.Status.PUBLISHED)
+        public_q = (
+                Q(author__profile__journal_visibility=models.journal.Visibility.PUBLIC)
+                & Q(visibility=models.journal.Visibility.PUBLIC)
+        )
+        follower_q = Q()
+        self_q = Q()
+        if self.request.user.is_authenticated:
+            follower_q = (
+                    Q(author__profile__journal_visibility__gte=models.journal.Visibility.FOLLOWERS)
+                    & Q(visibility__gte=models.journal.Visibility.FOLLOWERS)
+                    & Q(author__in=self.request.user.following.all())
+            )
+            self_q = Q(author=self.request.user)
+        return published_q & (self_q | public_q | follower_q)
+
+
+class SearchMixin(object):
+    form = forms.SearchForm()
+    query = None
+    query_params = dict()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.query_params = {}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.query = None
+        if 'query' in request.GET:
+            self.form = forms.SearchForm(request.GET)
+            if self.form.is_valid():
+                self.query = self.form.cleaned_data['query']
+                self.query_params['query'] = self.query
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.query:
+            qs = qs.annotate(
+                search=SearchVector(
+                    'title',
+                    'body',
+                    'book__title',
+                ),
+            ).filter(search=self.query)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'form': self.form,
+            'query_params': self.query_params,
+        })
+        return context
+
+
+class TagMixin(object):
+    tag = None
+    query_params = dict()
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.query_params = {}
+
+    def dispatch(self, request, *args, **kwargs):
+        self.tag = None
+        tag_slug = request.GET.get('tag')
+        if tag_slug:
+            if slug_re.match(tag_slug):
+                try:
+                    self.tag = Tag.objects.get(slug=tag_slug)
+                    self.query_params['tag'] = self.tag.slug
+                except Tag.DoesNotExist:
+                    pass
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.tag:
+            qs = qs.filter(tags__in=[self.tag])
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'tag': self.tag,
+            'query_params': self.query_params,
+        })
+        return context
+
+
+class Journal(
+    OtherProfileMixin,
+    SearchMixin,
+    TagMixin,
+    generic.ListView,
+):
+    request_user = None
+    profile = None
+    is_self_profile: bool
+
+    model = models.Entry
+    context_object_name = 'entries'
+    paginate_by = 50
+    template_name = 'journal/list.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.request_user = request.user
+        user_pk = kwargs.get('user_pk')
+        self.is_self_profile = user_pk == self.request_user.pk
+        if self.is_self_profile:
+            self.profile = self.request_user.profile
+        else:
+            self.check_and_set_other_profile(user_pk)
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs = qs.filter(author=self.profile.user)
+        if not self.is_self_profile:
+            visible_Q = self.visible_to_request_user_Q()
+            qs.filter(visible_Q)
+        return qs
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context.update({
+            'section': 'journal',
+            'profile': self.profile,
+            'follower': self.follower,
+            'request_from': self.request_from,
+            'request_to': self.request_to,
+        })
+        return context
+
+    def raise_404(self, author):
+        raise Http404(
+            'Journal of %(author)s is not public or not followed by request.user'
+            % {'author': author}
+        )
+
+
+class AsdfJournal(
     LoginRequiredMixin,
     UserEntryMixin,
     generic.ListView,
@@ -173,12 +367,27 @@ class UserJournal(
 
 
 class UserEntryDetail(
-    LoginRequiredMixin,
-    UserEntryMixin,
+    OtherProfileMixin,
     generic.DetailView,
 ):
-    """DetailView of an entry of request.user"""
+    model = models.Entry
     template_name = 'journal/entry.html'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        visible_Q = self.visible_to_request_user_Q()
+        qs.filter(visible_Q)
+        if qs.exists():
+            return qs
+        else:
+            raise Http404('Entry does not exist or is not visible to the requesting user')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'section': 'journal',
+        })
+        return context
 
 
 class UserEntryEditMixin(
@@ -196,7 +405,7 @@ class UserEntryEditMixin(
     template_name = 'manage/entry.html'
 
     def get_success_url(self):
-        return reverse_lazy('user_entry_detail', args=[self.object.pk])
+        return reverse_lazy('entry_detail', args=[self.request.user.pk, self.object.pk])
 
 
 class UserEntryCreateView(
@@ -247,16 +456,11 @@ class UserEntryDelete(
 
     def get_success_url(self):
         # todo: accept a next page
-        return reverse_lazy('user_journal')
+        return reverse_lazy('journal', args=[self.request.user.pk])
 
 
-class UserBookEntryList(
-    LoginRequiredMixin,
-    generic.ListView,
-):
-    """ListView of request.user's entries associated with a book"""
+class JournalBook(Journal):
     book = None
-    context_object_name = 'entries'
     template_name = 'journal/book.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -267,15 +471,13 @@ class UserBookEntryList(
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return models.Entry.objects.filter(
-            author=self.request.user,
-            book=self.book,
-        )
+        qs = super().get_queryset()
+        qs.filter(book=self.book)
+        return qs
 
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context.update({
-            'section': 'journal',
             'book': self.book,
         })
         return context
@@ -600,42 +802,48 @@ def follow_decline(request, request_pk):
 
 
 class Discover(
-    # LoginRequiredMixin,
+    OtherProfileMixin,
+    SearchMixin,
+    TagMixin,
     generic.ListView,
 ):
+    model = models.Entry
     context_object_name = 'entries'
     template_name = 'discover/list.html'
     paginate_by = 50
-    view_form = None
-
-    def dispatch(self, request, *args, **kwargs):
-        # self.view_form = forms.DiscoverViewSelectForm()
-        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        published_q = Q(status=models.Entry.Status.PUBLISHED)
-        public_q = (
-            Q(author__profile__journal_visibility=models.journal.Visibility.PUBLIC)
-            & Q(visibility=models.journal.Visibility.PUBLIC)
-        )
-        follower_q = Q()
-        self_q = Q()
-        if self.request.user.is_authenticated:
-            follower_q = (
-                Q(author__profile__journal_visibility__gte=models.journal.Visibility.FOLLOWERS)
-                & Q(visibility__gte=models.journal.Visibility.FOLLOWERS)
-                & Q(author__in=self.request.user.following.all())
-            )
-            self_q = Q(author=self.request.user)
-        qs = models.Entry.objects.filter(
-            published_q & (self_q | public_q | follower_q)
-        )
-        return qs
+        qs = super().get_queryset()
+        visible_Q = self.visible_to_request_user_Q()
+        return qs.filter(visible_Q)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
             'section': 'discover',
-            # 'view_form': self.view_form,
+        })
+        return context
+
+
+class DiscoverBook(Discover):
+    book = None
+    template_name = 'discover/book.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        self.book = get_object_or_404(
+            models.Book,
+            pk=kwargs.get('book_pk'),
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs.filter(book=self.book)
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({
+            'book': self.book,
         })
         return context

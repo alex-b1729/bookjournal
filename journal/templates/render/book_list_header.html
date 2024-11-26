@@ -1,10 +1,10 @@
 <div class="book-title">
     <h2>
-        <a href="{% url 'user_book_entry_list' book.pk %}">{{ book.title }}</a>
+        <a href="{% url 'journal_book' profile.user.pk book.pk %}">{{ book.title }}</a>
         {% if book.published %}- {{ book.published }}{% endif %}
     </h2>
     <p>
-        <a href="{% url 'user_entry_create' book.pk %}" class="btn">
+        <a href="{% url 'entry_create' request.user.pk book.pk %}" class="btn">
             + New Entry
         </a>
     </p>

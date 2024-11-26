@@ -21,7 +21,25 @@ Discover | {{ block.super }}
 {% ifchanged entry.book %}
 {% if not forloop.first %}</div>{% endif %}
 <div class="list-header">
-    {% include 'render/book_list_header.html' with book=entry.book %}
+    <div class="book-title">
+        <h2>
+            <a href="{% url 'discover_book' entry.book.pk %}">{{ entry.book.title }}</a>
+            {% if entry.book.published %}- {{ entry.book.published }}{% endif %}
+        </h2>
+        <p>
+            <a href="{% url 'entry_create' request.user.pk entry.book.pk %}" class="btn">
+                + New Entry
+            </a>
+        </p>
+    </div>
+    <h3 class="book-author-container">
+        By:
+        {% for author in entry.book.authors.all %}
+        <a href="{{ author.get_absolute_url }}" class="book-author">
+            {{ author }}
+        </a>{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </h3>
 </div>
 <div class="indent-1">
 {% endifchanged %}

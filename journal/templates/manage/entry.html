@@ -8,13 +8,8 @@ Entry
 {% endblock title %}
 
 {% block content %}
-{% if book %}{# when creating #}
-<p><a href="{% url 'user_book_entry_list' book.pk %}">< Cancel</a></p>
-{% include 'render/book_primary.html' with book=book %}
-{% else %}{# when editing #}
-<p><a href="{% url 'user_entry_detail' object.pk %}">< Cancel</a></p>
+<p><a href="{% url 'entry_detail' request.user.pk object.pk %}">< Cancel</a></p>
 {% include 'render/book_primary.html' with book=object.book %}
-{% endif %}
 
 <h3>
     {% if object.pk %}Edit

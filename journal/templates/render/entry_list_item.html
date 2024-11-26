@@ -2,7 +2,7 @@
 
 <div class="entry-header">
     <span class="entry-dt">
-        <a href="{% url 'user_entry_detail' entry.pk %}">{{ entry.publish_dt }}</a>
+        <a href="{% url 'entry_detail' entry.author.pk entry.pk %}">{{ entry.publish_dt }}</a>
     </span>
     - <span class="entry-author">{{ entry.author.username }}</span>
     - <span class="entry-visibility">{{ entry.get_visibility_display }}</span>
@@ -36,8 +36,10 @@
         <div class="entry-markdown">{{ entry.body|markdown|linebreaks }}</div>
     </div>
 
+    {% if entry.author == request.user %}
     <p>
-        <a href="{% url 'user_entry_update' entry.pk %}" class="btn">Edit Entry</a>
-        <a href="{% url 'user_entry_delete' entry.pk %}" class="btn btn-clear">Delete</a>
+        <a href="{% url 'entry_update' request.user.pk entry.pk %}" class="btn">Edit Entry</a>
+        <a href="{% url 'entry_delete' request.user.pk entry.pk %}" class="btn btn-clear">Delete</a>
     </p>
+    {% endif %}
 </div>

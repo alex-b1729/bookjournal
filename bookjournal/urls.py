@@ -59,6 +59,7 @@ urlpatterns = [
         'discover/',
         include([
             path('', journal_views.Discover.as_view(), name='discover'),
+            path('book/<int:book_pk>/', journal_views.DiscoverBook.as_view(), name='discover_book'),
         ])
     ),
     path(
@@ -88,7 +89,7 @@ urlpatterns = [
         ])
     ),
     path('', journal_views.index, name='index'),
-    path('', include('journal.urls')),
+    path('journal/', include('journal.urls')),
     path(
         'sitemap.xml',
         sitemap,
