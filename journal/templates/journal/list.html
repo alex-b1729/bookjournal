@@ -13,6 +13,34 @@
         {% endif %}
         Journal
     </h2>
+
+    {% if profile.user != request.user %}
+    {% if follower %}
+    <p>
+        <a href="#" class="btn btn-success btn-nopoint">&#x2713; Following</a>
+        <br>
+        <strong>Since:</strong> {{ follower.created.date }}
+    </p>
+    {% elif request_from %}
+    {% if request_from.status == 'o' %}
+    <div>
+        Follow requested<br>
+        <form method="post" action="{% url 'follow_accept' request_from.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'journal' profile.user.pk %}">
+            <button type="submit" value="Accept">Accept</button>
+        </form>
+        <form method="post" action="{% url 'follow_decline' request_from.pk %}">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{% url 'journal' profile.user.pk %}">
+            <button type="submit" value="Decline">Decline</button>
+        </form>
+    </div>
+    {% endif %}
+    {% elif not request_to %}
+    <a href="{% url 'request_follow' profile.user.pk %}" class="btn btn-success">+ Follow</a>
+    {% endif %}
+    {% endif %}
 </div>
 
 <div>
