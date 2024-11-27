@@ -91,6 +91,11 @@ class EmailUpdateView(
         return super().form_valid(form)
 
 
+@login_required
+def journal_redirect(request):
+    return HttpResponseRedirect(reverse('journal', args=[request.user.pk]))
+
+
 class UserMixin(object):
     def get_queryset(self):
         qs = super().get_queryset()

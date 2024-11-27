@@ -3,6 +3,7 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
+    path('', views.journal_redirect, name='user_journal'),
     path(
         '<int:user_pk>/',
         include([
