@@ -32,13 +32,13 @@ Books | {{ block.super }}
     <div class="book-title">
         <h2>
             {% if request.user.is_authenticated %}
-            <a href="{% url 'user_book_entry_list' book.pk %}">{% else %}
+            <a href="{% url 'journal_book' request.user.pk book.pk %}">{% else %}
             <a href="{{ book.get_absolute_url }}">{% endif %}
                 {{ book.title }} - {{ book.published }}
             </a>
         </h2>
         <p>
-            <a href="{% url 'user_entry_create' book.pk %}" class="btn">
+            <a href="{% url 'entry_create' request.user.pk book.pk %}" class="btn">
                 + New Entry
             </a>
         </p>

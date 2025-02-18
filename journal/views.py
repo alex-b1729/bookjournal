@@ -290,7 +290,7 @@ class Journal(
         qs = qs.filter(author=self.profile.user)
         if not self.is_self_profile:
             visible_Q = self.visible_to_request_user_Q()
-            qs.filter(visible_Q)
+            qs = qs.filter(visible_Q)
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -381,7 +381,7 @@ class UserEntryDetail(
     def get_queryset(self):
         qs = super().get_queryset()
         visible_Q = self.visible_to_request_user_Q()
-        qs.filter(visible_Q)
+        qs = qs.filter(visible_Q)
         if qs.exists():
             return qs
         else:
@@ -477,8 +477,7 @@ class JournalBook(Journal):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs.filter(book=self.book)
-        return qs
+        return qs.filter(book=self.book)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -843,8 +842,7 @@ class DiscoverBook(Discover):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        qs.filter(book=self.book)
-        return qs
+        return qs.filter(book=self.book)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

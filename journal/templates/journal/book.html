@@ -14,13 +14,9 @@
     {% endif %}
 </p>
 
-<p>
-    {{ profile.user.username }}'s entries for book
-</p>
-
-<h2>Entries for: </h2>
-
 {% include 'render/book_primary.html' with book=book %}
+
+<h2>Entries by {{ profile.user.username }}</h2>
 
 <form method="get">
     <p>

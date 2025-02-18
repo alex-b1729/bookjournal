@@ -8,29 +8,16 @@ Entry
 {% endblock title %}
 
 {% block content %}
-<p><a href="{% url 'entry_detail' request.user.pk object.pk %}">< Cancel</a></p>
-{% include 'render/book_primary.html' with book=object.book %}
 
-<h3>
+<h1>
     {% if object.pk %}Edit
     {% else %}New
     {% endif %}
     Entry
-</h3>
+</h1>
+<h2>{{ book.title }} - {{ book.published }}</h2>
 <form method="post">
     {{ form.non_field_errors }}
-
-    <div class="fieldWrapper">
-        <p>
-            {{ form.section.as_field_group }}
-            {% if not form.section.required %}(optional){% endif %}
-        </p>
-        <p>
-            {{ form.chapter.as_field_group }}
-            {% if not form.chapter.required %}(optional){% endif %}
-        </p>
-    </div>
-    <br/>
 
     <div class="fieldWrapper">
         {% if form.title.errors %}
@@ -43,13 +30,6 @@ Entry
     </div>
 
     <div class="fieldWrapper">
-        <p>
-            <label for="{{ form.tags.id_for_label}}">Tags: </label>
-            {{ form.tags }} (optional)<br/>
-            {{ form.tags.help_text }}
-        </p>
-    </div>
-    <div class="fieldWrapper">
         {% if form.body.errors %}
         <p>{{ form.body.errors }}</p>
         {% endif %}
@@ -59,6 +39,25 @@ Entry
 
     <div class="fieldWrapper">
         {{ form.visibility.as_field_group }}
+    </div>
+    <br/>
+
+    <div class="fieldWrapper">
+        <p>
+            {{ form.section.as_field_group }}
+            {% if not form.section.required %}(optional){% endif %}
+        </p>
+        <p>
+            {{ form.chapter.as_field_group }}
+            {% if not form.chapter.required %}(optional){% endif %}
+        </p>
+    </div>
+    <div class="fieldWrapper">
+        <p>
+            <label for="{{ form.tags.id_for_label}}">Tags: </label>
+            {{ form.tags }} (optional)<br/>
+            {{ form.tags.help_text }}
+        </p>
     </div>
     <br/>
 
